@@ -1,0 +1,513 @@
+@import "tailwindcss";
+
+/* FitVire Admin Dashboard - Brand Consistent Styling */
+
+/* FitVire Brand Colors - Exact match with website */
+:root {
+    --color-primary-50: #FEF2F2;
+    --color-primary-100: #FEE2E2;
+    --color-primary-200: #FECACA;
+    --color-primary-300: #FCA5A5;
+    --color-primary-400: #F87171;
+    --color-primary-500: #F04444;  /* Main FitVire red */
+    --color-primary-600: #DC2626;
+    --color-primary-700: #B91C1C;
+    --color-primary-800: #991B1B;
+    --color-primary-900: #7F1D1D;
+    --color-primary: #F04444;
+    --color-primary-hover: #FF6B4A;
+    --color-background: #000000;  /* Pure black background */
+    --color-surface: #2B2B2B;     /* Matching website surface */
+    --color-neutral: #D9D9D9;
+    --color-glass-bg: rgba(43, 43, 43, 0.4);  /* Website glass background */
+    --color-glass-border: rgba(255, 255, 255, 0.1);
+
+    font-family: 'Exo 2', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* FitVire Brand Dark Theme */
+html {
+    background-color: var(--color-background);
+    scroll-behavior: smooth;
+}
+
+body {
+    background: linear-gradient(135deg, #000000 0%, #0A0A0A 50%, #000000 100%);
+    color: var(--color-neutral);
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    /* Enhanced dark theme pattern overlay */
+    background-image: 
+        radial-gradient(circle at 25% 25%, rgba(240, 68, 68, 0.03) 0%, transparent 50%),
+        radial-gradient(circle at 75% 75%, rgba(255, 107, 74, 0.03) 0%, transparent 50%);
+}
+
+#root {
+    min-height: 100vh;
+    width: 100%;
+    background: inherit;
+}
+
+/* Ensure all elements follow dark theme */
+* {
+    border-color: var(--color-glass-border);
+}
+
+/* Custom keyframes */
+@keyframes gradient-shift {
+
+    0%,
+    100% {
+        transform: rotate(0deg) scale(1);
+    }
+
+    50% {
+        transform: rotate(180deg) scale(1.1);
+    }
+}
+
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-20px);
+    }
+}
+
+@keyframes glow {
+    0% {
+        opacity: 0.5;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes shimmer {
+    0% {
+        transform: translateX(-100%);
+    }
+
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+/* Custom utility classes */
+.bg-background {
+    background-color: var(--color-background) !important;
+}
+
+.bg-surface {
+    background-color: var(--color-surface) !important;
+}
+
+.bg-primary {
+    background-color: var(--color-primary) !important;
+}
+
+.bg-primary-hover {
+    background-color: var(--color-primary-hover) !important;
+}
+
+.bg-glass-bg {
+    background-color: var(--color-glass-bg) !important;
+}
+
+.text-neutral {
+    color: var(--color-neutral) !important;
+}
+
+.text-primary {
+    color: var(--color-primary) !important;
+}
+
+.text-primary-hover {
+    color: var(--color-primary-hover) !important;
+}
+
+.text-primary-400 {
+    color: var(--color-primary-400) !important;
+}
+
+.text-primary-500 {
+    color: var(--color-primary-500) !important;
+}
+
+.text-primary-600 {
+    color: var(--color-primary-600) !important;
+}
+
+.bg-primary-500 {
+    background-color: var(--color-primary-500) !important;
+}
+
+.bg-primary-600 {
+    background-color: var(--color-primary-600) !important;
+}
+
+.border-primary-500 {
+    border-color: var(--color-primary-500) !important;
+}
+
+.border-glass-border {
+    border-color: var(--color-glass-border) !important;
+}
+
+/* Font utility classes */
+.font-display {
+    font-family: 'Exo 2', system-ui, -apple-system, sans-serif !important;
+    font-weight: 700;
+}
+
+.font-body {
+    font-family: 'Exo 2', system-ui, -apple-system, sans-serif !important;
+}
+
+.backdrop-blur-glass {
+    backdrop-filter: blur(12px) !important;
+}
+
+/* Container utility */
+.container-custom {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+@media (min-width: 768px) {
+    .container-custom {
+        padding: 0 2rem;
+    }
+}
+
+/* Navbar animations and effects */
+.navbar-backdrop {
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+}
+
+/* Smooth scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Button hover effects */
+.btn-smooth-hover {
+    transition: all 0.3s ease;
+}
+
+.btn-smooth-hover:hover {
+    box-shadow: 0 8px 20px rgba(240, 68, 68, 0.25);
+}
+
+/* FitVire brand button effects */
+.fitvire-btn-primary {
+    background: linear-gradient(135deg, var(--color-primary-500), var(--color-primary-600));
+    color: white;
+    box-shadow: 0 4px 15px rgba(240, 68, 68, 0.2);
+    transition: all 0.3s ease;
+}
+
+.fitvire-btn-primary:hover {
+    background: linear-gradient(135deg, var(--color-primary-400), var(--color-primary-500));
+    box-shadow: 0 8px 25px rgba(240, 68, 68, 0.3), 0 0 20px rgba(240, 68, 68, 0.1);
+    transform: translateY(-1px);
+}
+
+.fitvire-btn-outline {
+    border: 2px solid var(--color-primary-500);
+    color: var(--color-primary-400);
+    background: transparent;
+    transition: all 0.3s ease;
+}
+
+.fitvire-btn-outline:hover {
+    background-color: rgba(240, 68, 68, 0.1);
+    border-color: var(--color-primary-400);
+    color: var(--color-primary-300);
+    box-shadow: 0 4px 20px rgba(240, 68, 68, 0.25);
+}
+
+/* Gradient text effect */
+.gradient-text {
+    background: linear-gradient(135deg, var(--color-primary), var(--color-primary-hover));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Navigation link hover effects */
+.nav-link-hover {
+    position: relative;
+    overflow: hidden;
+}
+
+.nav-link-hover::before {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--color-primary), var(--color-primary-hover));
+    transition: width 0.3s ease;
+}
+
+.nav-link-hover:hover::before,
+.nav-link-hover.active::before {
+    width: 100%;
+}
+
+/* Mobile menu animations */
+.mobile-menu-enter {
+    opacity: 0;
+    transform: translateY(-10px);
+}
+
+.mobile-menu-enter-active {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 300ms ease, transform 300ms ease;
+}
+
+.mobile-menu-exit {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.mobile-menu-exit-active {
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity 300ms ease, transform 300ms ease;
+}
+
+/* Shimmer animation */
+.animate-shimmer {
+    animation: shimmer 2s infinite linear;
+}
+
+/* Navbar button hover effects - Aspire-web style */
+.navbar-waitlist-btn {
+    color: var(--color-primary-400);
+    border-color: var(--color-primary-500);
+    border-width: 2px;
+    transition: all 0.3s ease;
+    background: transparent;
+}
+
+.navbar-waitlist-btn:hover {
+    color: var(--color-primary-300) !important;
+    border-color: var(--color-primary-400) !important;
+    background-color: rgba(240, 68, 68, 0.1) !important;
+    box-shadow: 0 4px 20px rgba(240, 68, 68, 0.25) !important;
+}
+
+.animate-gradient-shift {
+    animation: gradient-shift 8s ease-in-out infinite !important;
+}
+
+.animate-float {
+    animation: float 6s ease-in-out infinite !important;
+}
+
+.animate-glow {
+    animation: glow 2s ease-in-out infinite alternate !important;
+}
+
+/* Gradient utilities */
+.bg-gradient-to-r {
+    background-image: linear-gradient(to right, var(--tw-gradient-stops)) !important;
+}
+
+.from-primary {
+    --tw-gradient-from: var(--color-primary) !important;
+    --tw-gradient-to: rgb(240 68 68 / 0) !important;
+    --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important;
+}
+
+.to-primary-hover {
+    --tw-gradient-to: var(--color-primary-hover) !important;
+}
+
+.bg-clip-text {
+    background-clip: text !important;
+    -webkit-background-clip: text !important;
+}
+
+.text-transparent {
+    color: transparent !important;
+}
+
+/* Hero gradient line */
+.gradient-line {
+    background: linear-gradient(to right, transparent 0%, var(--color-primary) 50%, transparent 100%) !important;
+}
+
+/* FitVire Glass morphism effects */
+.glass-card {
+    background: rgba(43, 43, 43, 0.4) !important;
+    backdrop-filter: blur(12px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Enhanced glass popup styling */
+.glass-popup {
+    background: rgba(43, 43, 43, 0.8) !important;
+    backdrop-filter: blur(16px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.9) !important;
+}
+
+/* Custom gray colors for better dark theme support */
+.bg-gray-750 {
+    background-color: #2d3748 !important;
+}
+
+.hover\:bg-gray-750:hover {
+    background-color: #2d3748 !important;
+}
+
+/* Custom Scrollbar Styling */
+.scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(107, 114, 128, 0.5) transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 3px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+    background-color: rgba(107, 114, 128, 0.5);
+    border-radius: 3px;
+    transition: all 0.3s ease;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(107, 114, 128, 0.8);
+}
+
+.scrollbar-thin::-webkit-scrollbar-corner {
+    background: transparent;
+}
+
+/* Content area scrollbar styling */
+.content-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(147, 197, 253, 0.3) transparent;
+}
+
+.content-scrollbar::-webkit-scrollbar {
+    width: 8px;
+}
+
+.content-scrollbar::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+    margin: 8px 0;
+}
+
+.content-scrollbar::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, rgba(240, 68, 68, 0.4), rgba(255, 107, 74, 0.4));
+    border-radius: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+}
+
+.content-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, rgba(240, 68, 68, 0.6), rgba(255, 107, 74, 0.6));
+    transform: scale(1.1);
+}
+
+/* Smooth scrolling behavior */
+.smooth-scroll {
+    scroll-behavior: smooth;
+}
+
+/* FitVire-specific utility classes */
+.bg-fitvire-dark {
+    background: linear-gradient(135deg, #000000 0%, #0A0A0A 50%, #000000 100%);
+    background-image: 
+        radial-gradient(circle at 25% 25%, rgba(240, 68, 68, 0.03) 0%, transparent 50%),
+        radial-gradient(circle at 75% 75%, rgba(255, 107, 74, 0.03) 0%, transparent 50%);
+}
+
+.fitvire-card {
+    background: rgba(43, 43, 43, 0.6) !important;
+    backdrop-filter: blur(16px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
+}
+
+.fitvire-card:hover {
+    background: rgba(43, 43, 43, 0.8) !important;
+    border-color: rgba(240, 68, 68, 0.2) !important;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(240, 68, 68, 0.1) !important;
+}
+
+/* Enhanced text utilities */
+.text-fitvire-gradient {
+    background: linear-gradient(135deg, var(--color-primary-400), var(--color-primary-600));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Success, warning, and error states with FitVire theming */
+.success-500 {
+    color: #10B981 !important;
+}
+
+.warning-500 {
+    color: #F59E0B !important;
+}
+
+.error-500 {
+    color: #EF4444 !important;
+}
+
+.info-500 {
+    color: var(--color-primary-500) !important;
+}
+
+/* Enhanced hover states for interactive elements */
+.hover-lift {
+    transition: all 0.3s ease;
+}
+
+.hover-lift:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+/* FitVire focus states */
+.focus-fitvire:focus {
+    outline: 2px solid var(--color-primary-500);
+    outline-offset: 2px;
+}
+
+/* Dark mode form elements */
+input, textarea, select {
+    color: var(--color-neutral) !important;
+    background-color: var(--color-glass-bg) !important;
+    border-color: var(--color-glass-border) !important;
+}
+
+input:focus, textarea:focus, select:focus {
+    border-color: var(--color-primary-500) !important;
+    box-shadow: 0 0 0 3px rgba(240, 68, 68, 0.1) !important;
+}
