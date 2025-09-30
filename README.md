@@ -19,6 +19,44 @@
 
 ---
 
+## 📚 **Complete Documentation**
+
+**👉 [View Complete Project & Authentication Guide](./docs/AUTH_GUIDE.md)**
+
+This comprehensive guide is your single source of truth for everything FitVire Web Admin:
+
+### 🚀 Getting Started
+- Quick start & installation
+- Prerequisites and setup
+- Development commands
+- Environment configuration
+
+### 🏗️ Architecture & Design
+- System architecture overview
+- Domain-driven design structure
+- Component organization patterns
+- Design system & tokens
+
+### 🔐 Authentication System
+- JWT authentication flow
+- Role-based access control
+- Security best practices
+- API integration patterns
+
+### 💻 Development Guide
+- File & folder conventions
+- Component development templates
+- State management patterns
+- Testing strategy & examples
+
+### 🚀 Deployment & Operations
+- Build configuration
+- Deployment environments
+- Performance optimization
+- Troubleshooting guide
+
+---
+
 ## 🏗️ **Architecture Overview**
 
 ### **Clean Architecture Layers**

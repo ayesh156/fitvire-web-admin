@@ -5,13 +5,14 @@ export default {
     extend: {
       colors: {
         // FitVire Brand Colors - Exact Match
-        primary: '#F04444',
-        'primary-hover': '#FF6B4A',
-        background: '#0a0a0a',
-        surface: '#1a1a1a',
-        neutral: '#D9D9D9',
-        'glass-bg': 'rgba(26, 26, 26, 0.85)',
-        'glass-border': 'rgba(255, 255, 255, 0.15)',
+    primary: '#F04444',
+    'primary-hover': '#FF6B4A',
+    background: '#191919',
+    surface: '#202020',
+    elevated: '#252525',
+    neutral: '#D9D9D9',
+    'glass-bg': 'rgba(32, 32, 32, 0.85)',
+    'glass-border': 'rgba(255, 255, 255, 0.12)',
         
         // Primary scale for consistency
         'primary-50': '#FEF2F2',
