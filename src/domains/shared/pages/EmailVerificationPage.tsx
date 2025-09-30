@@ -26,8 +26,10 @@ export const EmailVerificationPage: React.FC<EmailVerificationPageProps> = ({
   const [error, setError] = useState('');
   const [timeLeft, setTimeLeft] = useState(60);
   const [canResend, setCanResend] = useState(false);
-  
+
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+  const codeValue = verificationCode.join('');
+  const isCodeComplete = verificationCode.every(digit => digit !== '') && codeValue.length === 6;
 
   // Countdown timer for resend
   useEffect(() => {
@@ -95,7 +97,7 @@ export const EmailVerificationPage: React.FC<EmailVerificationPageProps> = ({
       } else {
         setError('Invalid verification code. Please try again.');
       }
-    } catch (error) {
+  } catch {
       setError('Verification failed. Please try again.');
     } finally {
       setIsLoading(false);
@@ -117,7 +119,7 @@ export const EmailVerificationPage: React.FC<EmailVerificationPageProps> = ({
       // Clear current code
       setVerificationCode(['', '', '', '', '', '']);
       inputRefs.current[0]?.focus();
-    } catch (error) {
+  } catch {
       setError('Failed to resend code. Please try again.');
     } finally {
       setIsResending(false);
@@ -133,115 +135,154 @@ export const EmailVerificationPage: React.FC<EmailVerificationPageProps> = ({
   return (
     <AuthLayout
       title="Verify Your Email"
-      subtitle={`We've sent a 6-digit code to ${email}`}
-      showLogo={false}
+      subtitle={`Enter the 6-digit security code we just sent to ${email}`}
+      backgroundClassName="bg-[#191919]"
+      showBackgroundDecor={false}
+      cardClassName="bg-[#1f1f1f]/90 border border-white/10 shadow-2xl shadow-black/50"
     >
-      <div className="space-y-6">
-        {/* Back button */}
-        <button
-          onClick={onBack}
-          className="flex items-center gap-2 text-neutral-400 hover:text-neutral transition-colors text-sm"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Back to login
-        </button>
+      <div className="space-y-8">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <motion.button
+            whileHover={{ x: -3 }}
+            whileTap={{ scale: 0.97 }}
+            onClick={onBack}
+            className="inline-flex items-center gap-2 text-sm font-semibold text-neutral/80 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-2 focus-visible:ring-offset-[#191919]/60 transition-all"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back to login
+          </motion.button>
 
-        {/* Email display */}
-        <div className="flex items-center justify-center gap-3 p-4 bg-primary/5 border border-primary/20 rounded-lg">
-          <Mail className="h-5 w-5 text-primary-400" />
-          <span className="text-neutral text-sm font-medium">{email}</span>
+          {canResend ? (
+            <motion.div initial={{ opacity: 0, scale: 0.92 }} animate={{ opacity: 1, scale: 1 }}>
+              <Button
+                onClick={handleResendCode}
+                variant="outline"
+                size="sm"
+                disabled={isResending}
+                loading={isResending}
+                className="rounded-full border-white/20 bg-transparent text-neutral hover:text-white hover:border-primary/60 hover:bg-primary/10"
+              >
+                <RefreshCw className="h-4 w-4" />
+                {isResending ? 'Sending…' : 'Resend code'}
+              </Button>
+            </motion.div>
+          ) : (
+            <div className="inline-flex items-center gap-2 self-start rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs font-medium text-neutral/70">
+              <span className="h-2 w-2 rounded-full bg-primary animate-pulse" />
+              Resend available in {formatTime(timeLeft)}
+            </div>
+          )}
         </div>
 
-        {/* Error message */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          className="flex items-center gap-4 rounded-2xl border border-white/10 bg-white/5 px-5 py-4 shadow-inner shadow-black/40"
+        >
+          <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-primary/10 text-primary">
+            <Mail className="h-6 w-6" />
+          </div>
+          <div className="flex flex-col">
+            <span className="text-xs font-semibold uppercase tracking-[0.12em] text-neutral/60">
+              Verification email
+            </span>
+            <span className="text-base font-semibold text-white break-all">
+              {email}
+            </span>
+          </div>
+        </motion.div>
+
         {error && (
           <motion.div
-            initial={{ opacity: 0, y: -10 }}
+            initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
-            className="p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-center"
+            className="rounded-2xl border border-red-500/50 bg-red-500/10 px-4 py-3 text-center"
           >
-            <p className="text-red-400 text-sm">{error}</p>
+            <p className="text-sm font-medium text-red-300">{error}</p>
           </motion.div>
         )}
 
-        {/* Verification code inputs */}
-        <div className="space-y-4">
-          <label className="block text-sm font-medium text-neutral text-center">
-            Enter the 6-digit verification code
-          </label>
-          
-          <div className="flex justify-center gap-3">
+        <div className="space-y-5">
+          <div className="space-y-2 text-center">
+            <p className="text-sm font-semibold text-neutral/80">
+              Enter your 6-digit verification code
+            </p>
+            <p className="text-xs text-neutral/60">
+              Use the code within 10 minutes to keep your account secure.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-6 gap-2 sm:gap-3">
             {verificationCode.map((digit, index) => (
               <motion.input
                 key={index}
-                ref={el => { inputRefs.current[index] = el; }}
+                ref={el => {
+                  inputRefs.current[index] = el;
+                }}
                 type="text"
-                maxLength={6}
+                inputMode="numeric"
+                autoComplete="one-time-code"
+                maxLength={1}
                 value={digit}
-                onChange={(e) => handleInputChange(index, e.target.value)}
-                onKeyDown={(e) => handleKeyDown(index, e)}
-                className="w-12 h-12 text-center text-lg font-bold bg-surface border border-glass-border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all text-neutral"
+                onChange={e => handleInputChange(index, e.target.value)}
+                onKeyDown={e => handleKeyDown(index, e)}
+                aria-label={`Verification digit ${index + 1}`}
+                className="h-14 w-full rounded-2xl border border-white/10 bg-[#252525] text-center text-xl font-semibold text-white shadow-inner shadow-black/60 transition-all duration-200 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40 focus:ring-offset-2 focus:ring-offset-[#191919] sm:h-16"
                 disabled={isLoading}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
+                initial={{ opacity: 0, y: 16, scale: 0.92 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                whileFocus={{ scale: 1.05 }}
+                whileHover={{ scale: 1.03 }}
+                transition={{ delay: index * 0.05, duration: 0.35, ease: 'easeOut' }}
               />
             ))}
           </div>
         </div>
 
-        {/* Verify button */}
-        <Button
-          onClick={() => handleVerification(verificationCode.join(''))}
-          variant="primary"
-          size="lg"
-          fullWidth
-          disabled={verificationCode.join('').length !== 6 || isLoading}
-          loading={isLoading}
-          className="flex items-center justify-center gap-2"
-        >
-          {isLoading ? (
-            'Verifying...'
-          ) : (
-            <>
-              <CheckCircle className="h-4 w-4" />
-              Verify Code
-            </>
-          )}
-        </Button>
+        <div className="space-y-3">
+          <Button
+            onClick={() => handleVerification(codeValue)}
+            variant="primary"
+            size="lg"
+            fullWidth
+            disabled={!isCodeComplete || isLoading}
+            loading={isLoading}
+            className="rounded-xl border-none shadow-lg shadow-primary/30 focus-visible:ring-primary/70"
+          >
+            {isLoading ? (
+              'Verifying…'
+            ) : (
+              <span className="flex w-full items-center justify-center gap-2">
+                <CheckCircle className="h-4 w-4" />
+                <span>Verify code</span>
+              </span>
+            )}
+          </Button>
 
-        {/* Resend code */}
-        <div className="text-center space-y-3">
-          <p className="text-neutral/70 text-sm">
-            Didn't receive the code?
-          </p>
-          
-          {canResend ? (
-            <Button
-              onClick={handleResendCode}
-              variant="ghost"
-              size="sm"
-              disabled={isResending}
-              loading={isResending}
-              className="flex items-center justify-center gap-2"
+          <p className="text-center text-xs text-neutral/60">
+            Need a different email?{' '}
+            <button
+              type="button"
+              onClick={onBack}
+              className="font-semibold text-primary transition-colors hover:text-primary-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-2 focus-visible:ring-offset-[#191919]"
             >
-              <RefreshCw className="h-4 w-4" />
-              {isResending ? 'Sending...' : 'Resend Code'}
-            </Button>
-          ) : (
-            <p className="text-neutral/50 text-sm">
-              Resend code in {formatTime(timeLeft)}
-            </p>
-          )}
-        </div>
-
-        {/* Help text */}
-        <div className="text-center p-4 bg-surface/30 border border-glass-border rounded-lg">
-          <p className="text-xs text-neutral/60">
-            Check your spam folder if you don't see the email.
-            <br />
-            For demo purposes, any 6-digit code will work.
+              Go back to update it
+            </button>
           </p>
         </div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="rounded-2xl border border-white/10 bg-[#202020]/70 px-5 py-4 text-sm text-neutral/70"
+        >
+          <p className="leading-relaxed">
+            Can’t find the email? Try searching for <span className="font-semibold text-white">“FitVire verification”</span> or
+            check your spam folder. For this demo environment, any six-digit code will confirm your account.
+          </p>
+        </motion.div>
       </div>
     </AuthLayout>
   );

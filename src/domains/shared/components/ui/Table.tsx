@@ -6,6 +6,9 @@
 import React, { useState } from 'react';
 import { ChevronUp, ChevronDown, MoreHorizontal, Search } from 'lucide-react';
 import { motion } from 'framer-motion';
+import clsx from 'clsx';
+
+import { cardBaseClass, cardVariants } from './componentThemes';
 
 export interface TableColumn<T = any> {
   key: keyof T | string;
@@ -131,7 +134,7 @@ const Table = <T extends Record<string, any>>({
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className={`bg-gray-800 rounded-2xl border border-gray-700 shadow-sm ${className}`}
+      className={clsx(cardBaseClass, cardVariants.surface, 'overflow-hidden', className)}
     >
       {/* Header */}
       {(title || subtitle || searchable) && (
@@ -149,14 +152,14 @@ const Table = <T extends Record<string, any>>({
             {searchable && (
               <div className="relative max-w-xs">
                 <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                  <Search className="h-4 w-4 text-gray-400" />
+                  <Search className="h-4 w-4 text-neutral/50" />
                 </div>
                 <input
                   type="text"
                   placeholder={searchPlaceholder}
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="block w-full pl-10 pr-3 py-2 border border-gray-600 rounded-lg text-sm placeholder-gray-400 bg-gray-700 text-white focus:ring-2 focus:ring-brand-500 focus:border-brand-500"
+                  className="block w-full pl-10 pr-3 py-2 text-sm rounded-xl border border-glass-border bg-surface/60 text-white placeholder:text-neutral/60 focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-500 transition-all duration-200"
                 />
               </div>
             )}
@@ -168,32 +171,36 @@ const Table = <T extends Record<string, any>>({
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead>
-            <tr className="bg-gray-750">
+            <tr className="bg-white/5 border-b border-white/5">
               {columns.map((column, index) => (
                 <th
                   key={index}
-                  className={`px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider ${
-                    column.sortable ? 'cursor-pointer hover:bg-gray-700' : ''
-                  } ${column.className || ''}`}
+                  className={clsx(
+                    'px-6 py-4 text-left text-xs font-semibold text-neutral/60 uppercase tracking-wide transition-colors duration-200',
+                    column.sortable && 'cursor-pointer hover:bg-white/10',
+                    column.className
+                  )}
                   onClick={() => column.sortable && handleSort(String(column.key))}
                 >
                   <div className="flex items-center space-x-1">
                     <span>{column.header}</span>
                     {column.sortable && (
                       <div className="flex flex-col">
-                        <ChevronUp 
-                          className={`h-3 w-3 ${
-                            sortKey === column.key && sortDirection === 'asc' 
-                              ? 'text-brand-600' 
-                              : 'text-gray-400'
-                          }`} 
+                        <ChevronUp
+                          className={clsx(
+                            'h-3 w-3',
+                            sortKey === column.key && sortDirection === 'asc'
+                              ? 'text-primary-400'
+                              : 'text-neutral/50'
+                          )}
                         />
-                        <ChevronDown 
-                          className={`h-3 w-3 -mt-1 ${
-                            sortKey === column.key && sortDirection === 'desc' 
-                              ? 'text-brand-600' 
-                              : 'text-gray-400'
-                          }`} 
+                        <ChevronDown
+                          className={clsx(
+                            'h-3 w-3 -mt-1',
+                            sortKey === column.key && sortDirection === 'desc'
+                              ? 'text-primary-400'
+                              : 'text-neutral/50'
+                          )}
                         />
                       </div>
                     )}
@@ -207,7 +214,7 @@ const Table = <T extends Record<string, any>>({
               )}
             </tr>
           </thead>
-          <tbody className="bg-gray-800 divide-y divide-gray-700">
+          <tbody className="bg-transparent divide-y divide-white/5">
             {processedData.length === 0 ? (
               <tr>
                 <td 
@@ -219,7 +226,7 @@ const Table = <T extends Record<string, any>>({
                       <Search className="w-6 h-6 text-gray-400" />
                     </div>
                     <p className="text-lg font-medium text-white mb-1">No results found</p>
-                    <p className="text-sm text-gray-400">{emptyMessage}</p>
+                    <p className="text-sm text-neutral/60">{emptyMessage}</p>
                   </div>
                 </td>
               </tr>
@@ -230,10 +237,10 @@ const Table = <T extends Record<string, any>>({
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: index * 0.05 }}
-                  className="hover:bg-gray-750 transition-colors duration-150"
+                  className="hover:bg-white/5 transition-colors duration-150"
                 >
                   {columns.map((column, colIndex) => (
-                    <td key={colIndex} className={`px-6 py-4 whitespace-nowrap text-sm text-white ${column.className || ''}`}>
+                    <td key={colIndex} className={clsx('px-6 py-4 whitespace-nowrap text-sm text-white/90', column.className)}>
                       {getCellValue(item, column)}
                     </td>
                   ))}
@@ -245,13 +252,13 @@ const Table = <T extends Record<string, any>>({
                             e.stopPropagation();
                             setShowActionsFor(showActionsFor === index ? null : index);
                           }}
-                          className="text-gray-400 hover:text-gray-300 p-1 rounded-full hover:bg-gray-700 transition-colors duration-150"
+                          className="text-neutral/50 hover:text-neutral p-1 rounded-full hover:bg-white/10 transition-colors duration-150"
                         >
                           <MoreHorizontal className="h-4 w-4" />
                         </button>
                         
                         {showActionsFor === index && (
-                          <div className="absolute right-0 mt-2 w-48 bg-gray-700 rounded-lg shadow-xl border border-gray-600 z-50 transform -translate-x-2">
+                          <div className="absolute right-0 mt-2 w-48 rounded-lg border border-white/10 bg-glass-bg/90 backdrop-blur-lg shadow-[0_20px_45px_rgba(0,0,0,0.35)] z-50 transform -translate-x-2">
                             <div className="py-1">
                               {actions
                                 .filter(action => !action.show || action.show(item))
@@ -262,7 +269,10 @@ const Table = <T extends Record<string, any>>({
                                     action.onClick(item);
                                     setShowActionsFor(null);
                                   }}
-                                  className={`flex items-center w-full px-4 py-2 text-sm text-left hover:bg-gray-600 transition-colors duration-150 ${action.className || 'text-gray-300'}`}
+                                  className={clsx(
+                                    'flex items-center w-full px-4 py-2 text-sm text-left text-neutral/80 hover:bg-white/10 transition-colors duration-150',
+                                    action.className
+                                  )}
                                 >
                                   {action.icon && <span className="mr-3">{action.icon}</span>}
                                   {action.label}

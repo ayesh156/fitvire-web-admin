@@ -6,10 +6,11 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { User, Shield, Star, Calendar, MapPin } from 'lucide-react';
-import DataTable, { type DataTableColumn } from '../components/ui/DataTable';
+import DataTable, { type DataTableColumn } from '../components/data/DataTable';
 import Badge from '../components/ui/Badge';
-import { createSettingsMenuItem, createProfileMenuItem, createViewMenuItem, createEditMenuItem, createDeleteMenuItem, type MenuItem } from '../components/ui/ActionMenu';
+import { createSettingsMenuItem, createProfileMenuItem, createViewMenuItem, createEditMenuItem, createDeleteMenuItem, type MenuItem } from '../components/utility/ActionMenu';
 import { useNavigate } from 'react-router-dom';
+import PageContainer from '../components/layout/PageContainer';
 
 interface AdvancedUser {
   id: string;
@@ -184,7 +185,7 @@ const AdvancedUserManagement: React.FC = () => {
       render: (value) => {
         const variants = {
           active: 'success',
-          inactive: 'gray',
+          inactive: 'neutral',
           suspended: 'danger',
           pending: 'warning'
         } as const;
@@ -206,7 +207,7 @@ const AdvancedUserManagement: React.FC = () => {
       header: 'Plan',
       render: (value, user) => {
         if (user.role !== 'customer') return '—';
-        if (!value) return <Badge variant="gray">No Plan</Badge>;
+        if (!value) return <Badge variant="neutral">No Plan</Badge>;
         
         const variants = {
           'Premium': 'success',
@@ -222,7 +223,7 @@ const AdvancedUserManagement: React.FC = () => {
       header: 'Specialization',
       render: (value, user) => {
         if (user.role !== 'partner') return '—';
-        return value ? <Badge variant="info">{value}</Badge> : <Badge variant="gray">Unspecified</Badge>;
+        return value ? <Badge variant="info">{value}</Badge> : <Badge variant="neutral">Unspecified</Badge>;
       }
     },
     {
@@ -302,17 +303,19 @@ const AdvancedUserManagement: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <PageContainer className="gap-6">
       {/* Page Header */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="flex items-center space-x-3"
+        className="flex items-center space-x-4"
       >
-        <User className="w-8 h-8 text-brand-500" />
+        <div className="p-4 bg-primary/20 rounded-3xl">
+          <User className="w-10 h-10 text-primary" />
+        </div>
         <div>
-          <h1 className="text-3xl font-bold text-white">Advanced User Management</h1>
-          <p className="text-gray-400 mt-1">
+          <h1 className="text-4xl font-bold text-white font-display">Advanced User Management</h1>
+          <p className="text-neutral/80 text-lg mt-2">
             Comprehensive user management with intelligent action menus and navigation
           </p>
         </div>
@@ -349,31 +352,60 @@ const AdvancedUserManagement: React.FC = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
-        className="bg-surface rounded-lg p-6 border border-glass-border"
+        className="bg-surface/40 backdrop-blur-sm rounded-2xl p-8 border border-glass-border"
       >
-        <h3 className="text-lg font-semibold text-white mb-3">Action Menu Features</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-          <div className="space-y-2">
-            <h4 className="font-medium text-brand-400">Intelligent Positioning</h4>
-            <ul className="text-gray-400 space-y-1">
-              <li>• Auto-detects container boundaries</li>
-              <li>• Prevents overflow with smart positioning</li>
-              <li>• Responsive design for mobile and desktop</li>
-              <li>• Click-outside and ESC key handling</li>
+        <div className="flex items-center space-x-3 mb-6">
+          <div className="p-3 bg-primary/20 rounded-xl">
+            <Shield className="w-6 h-6 text-primary" />
+          </div>
+          <h3 className="text-xl font-semibold text-white">Action Menu Features</h3>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-3">
+            <h4 className="font-semibold text-primary text-lg">Intelligent Positioning</h4>
+            <ul className="text-neutral/80 space-y-2 text-sm">
+              <li className="flex items-center space-x-2">
+                <div className="w-1.5 h-1.5 bg-primary rounded-full"></div>
+                <span>Auto-detects container boundaries</span>
+              </li>
+              <li className="flex items-center space-x-2">
+                <div className="w-1.5 h-1.5 bg-primary rounded-full"></div>
+                <span>Prevents overflow with smart positioning</span>
+              </li>
+              <li className="flex items-center space-x-2">
+                <div className="w-1.5 h-1.5 bg-primary rounded-full"></div>
+                <span>Responsive design for mobile and desktop</span>
+              </li>
+              <li className="flex items-center space-x-2">
+                <div className="w-1.5 h-1.5 bg-primary rounded-full"></div>
+                <span>Click-outside and ESC key handling</span>
+              </li>
             </ul>
           </div>
-          <div className="space-y-2">
-            <h4 className="font-medium text-brand-400">Navigation Integration</h4>
-            <ul className="text-gray-400 space-y-1">
-              <li>• Direct navigation to Settings page</li>
-              <li>• Direct navigation to Profile page</li>
-              <li>• Contextual actions per user type</li>
-              <li>• Smooth animations and transitions</li>
+          <div className="space-y-3">
+            <h4 className="font-semibold text-primary text-lg">Navigation Integration</h4>
+            <ul className="text-neutral/80 space-y-2 text-sm">
+              <li className="flex items-center space-x-2">
+                <div className="w-1.5 h-1.5 bg-primary rounded-full"></div>
+                <span>Direct navigation to Settings page</span>
+              </li>
+              <li className="flex items-center space-x-2">
+                <div className="w-1.5 h-1.5 bg-primary rounded-full"></div>
+                <span>Direct navigation to Profile page</span>
+              </li>
+              <li className="flex items-center space-x-2">
+                <div className="w-1.5 h-1.5 bg-primary rounded-full"></div>
+                <span>Contextual actions per user type</span>
+              </li>
+              <li className="flex items-center space-x-2">
+                <div className="w-1.5 h-1.5 bg-primary rounded-full"></div>
+                <span>Smooth animations and transitions</span>
+              </li>
             </ul>
           </div>
         </div>
       </motion.div>
-    </div>
+    </PageContainer>
   );
 };
 

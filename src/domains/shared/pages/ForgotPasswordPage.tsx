@@ -79,44 +79,59 @@ export const ForgotPasswordPage: React.FC = () => {
           className="text-center space-y-6"
         >
           {/* Success Icon */}
-          <div className="mx-auto w-16 h-16 bg-green-500/10 rounded-full flex items-center justify-center">
-            <CheckCircleIcon className="h-8 w-8 text-green-500" />
-          </div>
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+            className="mx-auto w-20 h-20 bg-primary/20 backdrop-blur-sm rounded-2xl flex items-center justify-center border border-primary/30"
+          >
+            <CheckCircleIcon className="h-10 w-10 text-primary" />
+          </motion.div>
 
           {/* Success Message */}
-          <div className="space-y-2">
-            <p className="text-neutral text-sm">
+          <div className="space-y-3">
+            <p className="text-white text-base font-medium">
               If an admin account with that email address exists, we've sent you a password reset link.
             </p>
-            <p className="text-neutral/70 text-xs">
+            <p className="text-neutral/80 text-sm leading-relaxed">
               Please check your email and follow the instructions to reset your password.
             </p>
           </div>
 
           {/* Action Buttons */}
-          <div className="space-y-3">
-            <Button
-              variant="primary"
-              fullWidth
-              onClick={handleBackToLogin}
-            >
-              Back to Sign In
-            </Button>
+          <div className="space-y-4">
+            <motion.div whileHover={{ scale: 1.02 }}>
+              <Button
+                variant="primary"
+                fullWidth
+                size="lg"
+                onClick={handleBackToLogin}
+                className="bg-gradient-to-r from-primary to-primary-hover hover:shadow-lg hover:shadow-primary/25"
+              >
+                Back to Sign In
+              </Button>
+            </motion.div>
             
-            <button
+            <motion.button
+              whileHover={{ scale: 1.05 }}
               onClick={handleResendEmail}
-              className="text-sm text-primary-500 hover:text-primary-400 transition-colors"
+              className="text-sm text-primary hover:text-primary-hover transition-colors duration-300 font-medium"
             >
               Didn't receive the email? Resend
-            </button>
+            </motion.button>
           </div>
 
           {/* Help Text */}
-          <div className="mt-6 p-4 bg-primary-500/5 border border-primary-500/20 rounded-lg">
-            <p className="text-xs text-neutral/70 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6 }}
+            className="mt-6 p-4 bg-surface/30 backdrop-blur-sm border border-glass-border rounded-xl"
+          >
+            <p className="text-xs text-neutral/80 text-center leading-relaxed">
               If you continue to have trouble accessing your account, please contact the system administrator.
             </p>
-          </div>
+          </motion.div>
         </motion.div>
       </AuthLayout>
     );
@@ -133,9 +148,9 @@ export const ForgotPasswordPage: React.FC = () => {
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="p-4 bg-red-500/10 border border-red-500/20 rounded-lg"
+            className="p-4 bg-red-500/10 backdrop-blur-sm border border-red-500/30 rounded-xl"
           >
-            <p className="text-red-500 text-sm">{error}</p>
+            <p className="text-red-400 text-sm font-medium">{error}</p>
           </motion.div>
         )}
 
@@ -155,37 +170,46 @@ export const ForgotPasswordPage: React.FC = () => {
         </div>
 
         {/* Submit Button */}
-        <Button
-          type="submit"
-          variant="primary"
-          size="lg"
-          fullWidth
-          disabled={!isValid || isLoading}
-          loading={isLoading}
-        >
-          {isLoading ? 'Sending...' : 'Send Reset Instructions'}
-        </Button>
+        <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+          <Button
+            type="submit"
+            variant="primary"
+            size="lg"
+            fullWidth
+            disabled={!isValid || isLoading}
+            loading={isLoading}
+            className="bg-gradient-to-r from-primary to-primary-hover hover:shadow-lg hover:shadow-primary/25 py-4 text-lg font-semibold"
+          >
+            {isLoading ? 'Sending...' : 'Send Reset Instructions'}
+          </Button>
+        </motion.div>
 
         {/* Back to Login */}
         <div className="text-center">
-          <button
+          <motion.button
+            whileHover={{ x: -2 }}
             type="button"
             onClick={handleBackToLogin}
-            className="inline-flex items-center gap-2 text-sm text-neutral/70 hover:text-primary-500 transition-colors"
+            className="inline-flex items-center gap-2 text-sm text-neutral/70 hover:text-white transition-all duration-300 font-medium"
             disabled={isLoading}
           >
             <ArrowLeftIcon className="h-4 w-4" />
             Back to Sign In
-          </button>
+          </motion.button>
         </div>
 
         {/* Security Notice */}
-        <div className="mt-6 p-4 bg-surface/50 border border-glass-border rounded-lg">
-          <p className="text-xs text-neutral/70 text-center">
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="mt-6 p-4 bg-surface/30 backdrop-blur-sm border border-glass-border rounded-xl"
+        >
+          <p className="text-xs text-neutral/80 text-center leading-relaxed">
             For security reasons, password reset is only available for verified admin accounts.
-            The reset link will expire in 1 hour.
+            <br />The reset link will expire in 1 hour.
           </p>
-        </div>
+        </motion.div>
       </form>
     </AuthLayout>
   );

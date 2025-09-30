@@ -1,4 +1,5 @@
 import React from 'react';
+import clsx from 'clsx';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -30,13 +31,18 @@ interface LineChartProps {
       borderColor: string;
       backgroundColor: string;
       tension?: number;
+      fill?: boolean;
+      borderWidth?: number;
+      pointBackgroundColor?: string;
+      cubicInterpolationMode?: 'monotone' | 'default';
     }>;
   };
   title?: string;
   height?: number;
+  className?: string;
 }
 
-const LineChart: React.FC<LineChartProps> = ({ data, title, height = 300 }) => {
+const LineChart: React.FC<LineChartProps> = ({ data, title, height = 300, className }) => {
   const options = {
     responsive: true,
     maintainAspectRatio: false,
@@ -120,7 +126,12 @@ const LineChart: React.FC<LineChartProps> = ({ data, title, height = 300 }) => {
   };
 
   return (
-    <div className="glass-card p-6 rounded-2xl border border-glass-border">
+    <div
+      className={clsx(
+        'rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-md shadow-[0_20px_45px_-28px_rgba(239,68,68,0.45)] transition-colors duration-300',
+        className
+      )}
+    >
       <div style={{ height: `${height}px` }}>
         <Line data={data} options={options} />
       </div>

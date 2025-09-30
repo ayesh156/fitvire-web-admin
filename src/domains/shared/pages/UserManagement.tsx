@@ -20,7 +20,8 @@ import Table from '../components/ui/Table';
 import type { TableColumn, TableAction } from '../components/ui/Table';
 import Button from '../components/ui/Button';
 import Badge from '../components/ui/Badge';
-import FilterComponent from '../components/ui/FilterComponent';
+import FilterComponent from '../components/data/FilterComponent';
+import PageContainer from '../components/layout/PageContainer';
 
 interface User {
   id: string;
@@ -231,36 +232,48 @@ const UserManagement: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <PageContainer className="gap-6">
       {/* Page Header */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="flex items-center justify-between"
       >
-        <div>
-          <h1 className="text-3xl font-bold text-white mb-2">
-            User Management
-          </h1>
-          <p className="text-gray-400">
-            Manage customers, partners, and administrative users across the FitVire platform.
-          </p>
+        <div className="flex items-center space-x-4">
+          <div className="p-3 bg-primary/20 rounded-2xl">
+            <Users className="w-8 h-8 text-primary" />
+          </div>
+          <div>
+            <h1 className="text-4xl font-bold text-white mb-2 font-display">
+              User Management
+            </h1>
+            <p className="text-neutral/80 text-lg">
+              Manage customers, partners, and administrative users across the FitVire platform.
+            </p>
+          </div>
         </div>
         
-        <div className="flex items-center space-x-4">
-          <Button
-            variant="outline"
-            icon={<Download className="w-4 h-4" />}
-            className="border-gray-600 text-gray-300 hover:bg-gray-800"
-          >
-            Export
-          </Button>
-          <Button
-            variant="primary"
-            icon={<Plus className="w-4 h-4" />}
-          >
-            Add User
-          </Button>
+        <div className="flex items-center space-x-3">
+          <motion.div whileHover={{ scale: 1.02 }}>
+            <Button
+              variant="outline"
+              icon={<Download className="w-4 h-4" />}
+              className="border-glass-border text-neutral hover:bg-surface/60 hover:border-primary/30 transition-all duration-300"
+              size="lg"
+            >
+              Export
+            </Button>
+          </motion.div>
+          <motion.div whileHover={{ scale: 1.02 }}>
+            <Button
+              variant="primary"
+              icon={<Plus className="w-4 h-4" />}
+              size="lg"
+              className="bg-gradient-to-r from-primary to-primary-hover hover:shadow-lg hover:shadow-primary/25"
+            >
+              Add User
+            </Button>
+          </motion.div>
         </div>
       </motion.div>
 
@@ -269,27 +282,33 @@ const UserManagement: React.FC = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className="border-b border-gray-700"
+        className="border-b border-glass-border"
       >
         <nav className="flex space-x-8">
-          {(['customers', 'partners', 'management'] as const).map((tab) => (
-            <button
+          {(['customers', 'partners', 'management'] as const).map((tab, index) => (
+            <motion.button
               key={tab}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 + index * 0.1 }}
+              whileHover={{ y: -2 }}
               onClick={() => setActiveTab(tab)}
               className={`
-                flex items-center space-x-2 py-4 px-1 border-b-2 font-medium text-sm transition-colors
+                flex items-center space-x-3 py-4 px-2 border-b-2 font-medium text-sm transition-all duration-300
                 ${activeTab === tab 
-                  ? 'border-brand-500 text-brand-400' 
-                  : 'border-transparent text-gray-400 hover:text-gray-300 hover:border-gray-600'
+                  ? 'border-primary text-primary shadow-lg shadow-primary/10' 
+                  : 'border-transparent text-neutral/60 hover:text-white hover:border-glass-border'
                 }
               `}
             >
-              {getTabIcon(tab)}
+              <div className={activeTab === tab ? 'text-primary' : 'text-neutral/60'}>
+                {getTabIcon(tab)}
+              </div>
               <span className="capitalize">{tab}</span>
-              <Badge variant="gray" size="sm">
+              <Badge variant={activeTab === tab ? 'primary' : 'secondary'} size="sm">
                 {filteredUsers.length}
               </Badge>
-            </button>
+            </motion.button>
           ))}
         </nav>
       </motion.div>
@@ -299,20 +318,24 @@ const UserManagement: React.FC = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
-        className="bg-gray-800 rounded-lg p-4"
+        className="bg-surface/40 backdrop-blur-sm border border-glass-border rounded-2xl p-6"
       >
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center space-x-2">
-            <Filter className="w-4 h-4 text-gray-400" />
-            <span className="text-sm font-medium text-white">Filters</span>
-            <div className="text-sm text-gray-400">
-              Showing {filteredUsers.length} {activeTab}
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center space-x-3">
+            <div className="p-2 bg-primary/20 rounded-lg">
+              <Filter className="w-4 h-4 text-primary" />
+            </div>
+            <span className="text-lg font-semibold text-white">Filters</span>
+            <div className="px-3 py-1 bg-primary/10 border border-primary/30 rounded-full">
+              <span className="text-sm text-primary font-medium">
+                {filteredUsers.length} {activeTab}
+              </span>
             </div>
           </div>
           
-          <div className="flex items-center space-x-2">
-            <div className="text-sm text-gray-400">Sort by:</div>
-            <select className="bg-gray-700 border border-gray-600 text-white text-sm rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-brand-500 focus:border-brand-500">
+          <div className="flex items-center space-x-3">
+            <span className="text-sm text-neutral/70 font-medium">Sort by:</span>
+            <select className="bg-surface/60 backdrop-blur-sm border border-glass-border text-white text-sm rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all duration-300">
               <option>Name</option>
               <option>Join Date</option>
               <option>Last Active</option>
@@ -368,6 +391,7 @@ const UserManagement: React.FC = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
+        className="bg-surface/20 backdrop-blur-sm border border-glass-border rounded-2xl overflow-hidden"
       >
         <Table
           data={filteredUsers}
@@ -375,11 +399,11 @@ const UserManagement: React.FC = () => {
           actions={actions}
           searchable={true}
           searchPlaceholder={`Search ${activeTab}...`}
-          className="bg-gray-800 border-gray-700"
+          className="bg-transparent border-transparent"
           emptyMessage={`No ${activeTab} found`}
         />
       </motion.div>
-    </div>
+    </PageContainer>
   );
 };
 

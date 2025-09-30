@@ -12,7 +12,7 @@ import GlassCard from '../components/ui/GlassCard';
 
 const NotFoundPage: React.FC = () => {
   return (
-    <div className="min-h-screen bg-background relative overflow-hidden">
+    <div className="relative h-[100dvh] min-h-[100dvh] overflow-hidden overflow-y-auto bg-background">
       {/* Animated Background Elements */}
       <div className="absolute inset-0">
         {/* Primary gradient orbs */}
@@ -54,7 +54,7 @@ const NotFoundPage: React.FC = () => {
       </div>
 
       {/* Main Content */}
-      <div className="relative z-10 min-h-screen flex items-center justify-center p-6">
+      <div className="relative z-10 flex h-full min-h-[100dvh] items-center justify-center p-6">
         <div className="max-w-2xl mx-auto text-center">
           
           {/* Error Icon & Code */}

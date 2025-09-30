@@ -1,9 +1,9 @@
-import React from 'react';
-import { 
-  Users, 
-  UserCheck, 
-  Building, 
-  TrendingUp, 
+import React, { useMemo } from 'react';
+import {
+  Users,
+  UserCheck,
+  Building,
+  TrendingUp,
   DollarSign,
   Activity,
   Heart,
@@ -12,29 +12,36 @@ import {
   Trophy,
   ArrowUpRight,
   Clock,
-  ChevronRight,
-  Star,
   Dumbbell,
-  Timer,
+  Download,
+  PlusCircle,
   Award
 } from 'lucide-react';
-import { motion } from 'framer-motion';
 
-// Enhanced fitness platform metrics
+import LineChart from '../components/charts/LineChart';
+import BarChart from '../components/charts/BarChart';
+import PageHeader from '../components/ui/PageHeader';
+import Button from '../components/ui/Button';
+import StatCard from '../components/data/StatCard';
+import SectionCard from '../components/ui/SectionCard';
+import QuickActionCard from '../components/dashboard/QuickActionCard';
+import PageContainer from '../components/layout/PageContainer';
+
+const formatCurrency = (value: number) =>
+  new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(value);
+
+const formatCompactNumber = (value: number) =>
+  new Intl.NumberFormat('en-US', { notation: 'compact', maximumFractionDigits: 1 }).format(value);
+
 const mockData = {
   keyMetrics: {
     totalMembers: 15748,
     activeMembers: 12456,
     partnerFacilities: 347,
     monthlyRevenue: 542300,
-    todayWorkouts: 89,
-    avgRating: 4.8
-  },
-  workoutStats: {
-    totalWorkouts: 156789,
     completionRate: 87,
-    avgDuration: 42,
-    popularCategory: 'HIIT Training'
+    avgRating: 4.8,
+    todayWorkouts: 89
   },
   recentActivities: [
     {
@@ -42,506 +49,419 @@ const mockData = {
       type: 'workout',
       user: 'Sarah Johnson',
       action: 'completed HIIT workout',
-      time: '2 min ago',
-      icon: 'Zap',
-      color: 'success'
+      time: '2 min ago'
     },
     {
       id: 2,
       type: 'partnership',
       user: 'Elite Fitness Center',
       action: 'joined as verified partner',
-      time: '15 min ago',
-      icon: 'Building',
-      color: 'info'
+      time: '15 min ago'
     },
     {
       id: 3,
       type: 'membership',
       user: 'Mike Davis',
       action: 'upgraded to Premium',
-      time: '1 hour ago',
-      icon: 'Trophy',
-      color: 'warning'
+      time: '1 hour ago'
     },
     {
       id: 4,
       type: 'review',
       user: 'Emma Wilson',
       action: 'left 5-star review',
-      time: '2 hours ago',
-      icon: 'Star',
-      color: 'primary'
+      time: '2 hours ago'
     }
   ],
   quickInsights: [
-    { label: 'Peak Hours', value: '6-8 PM', trend: '+12%', icon: 'Clock' },
-    { label: 'Top Workout', value: 'HIIT', trend: '+24%', icon: 'Zap' },
-    { label: 'Avg Duration', value: '42 min', trend: '+8%', icon: 'Timer' },
-    { label: 'Satisfaction', value: '4.8/5', trend: '+0.2', icon: 'Heart' }
+    { label: 'Peak Hours', value: '6-8 PM', trend: '+12%', icon: 'clock' },
+    { label: 'Top Workout', value: 'HIIT Burnout', trend: '+24%', icon: 'zap' },
+    { label: 'Active Streaks', value: '8.2K users', trend: '+9%', icon: 'users' },
+    { label: 'Churn Risk', value: '2.8% forecast', trend: '-1.2%', icon: 'trend' }
   ]
 };
 
-interface MetricCardProps {
-  title: string;
-  value: string | number;
-  icon: React.ReactNode;
-  change?: string;
-  changeType?: 'positive' | 'negative' | 'neutral';
-  gradient: string;
-  delay?: number;
-}
+const engagementHighlights = [
+  { id: 'streaks', label: 'Streak Retention', value: '92%', caption: 'Members on 7+ day streaks' },
+  { id: 'conversion', label: 'Conversion Velocity', value: '48%', caption: 'Trial → paid before day 5' },
+  { id: 'completion', label: 'Workout Completion', value: '87%', caption: 'Programs finished weekly' }
+];
 
-const MetricCard: React.FC<MetricCardProps> = ({ 
-  title, 
-  value, 
-  icon, 
-  change, 
-  changeType = 'positive',
-  gradient,
-  delay = 0
-}) => {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 30, scale: 0.95 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      transition={{ delay, duration: 0.5, ease: "easeOut" }}
-      whileHover={{ scale: 1.02, y: -4 }}
-      className="group relative bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 p-6 hover:bg-white/15 transition-all duration-300 cursor-pointer overflow-hidden"
-    >
-      {/* Animated gradient background */}
-      <div className={`absolute inset-0 bg-gradient-to-br ${gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-500`} />
-      
-      {/* Subtle glow effect */}
-      <div className={`absolute -inset-0.5 bg-gradient-to-br ${gradient} rounded-2xl blur opacity-0 group-hover:opacity-20 transition-opacity duration-500`} />
-      
-      <div className="relative z-10">
-        <div className="flex items-center justify-between mb-4">
-          <div className={`p-3 bg-gradient-to-br ${gradient} rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300`}>
-            {icon}
-          </div>
-          {change && (
-            <div className="flex items-center space-x-1">
-              <ArrowUpRight className={`w-4 h-4 ${changeType === 'positive' ? 'text-emerald-400' : 'text-red-400'} group-hover:scale-110 transition-transform duration-300`} />
-              <span className={`text-sm font-semibold ${changeType === 'positive' ? 'text-emerald-400' : 'text-red-400'}`}>
-                {change}
-              </span>
-            </div>
-          )}
-        </div>
-        <h3 className="text-gray-400 text-sm font-medium mb-2 group-hover:text-gray-300 transition-colors duration-300">{title}</h3>
-        <p className="text-3xl font-bold text-white tracking-tight group-hover:text-gray-50 transition-colors duration-300">
-          {typeof value === 'number' ? value.toLocaleString() : value}
-        </p>
-      </div>
-    </motion.div>
-  );
+const revenuePrograms = [
+  { id: 'virtual-classes', label: 'Virtual Classes', value: 210, growth: 18.4 },
+  { id: 'corporate', label: 'Corporate Wellness', value: 156, growth: 12.1 },
+  { id: 'events', label: 'Popup Events', value: 94, growth: 9.6 },
+  { id: 'marketplace', label: 'Marketplace Sales', value: 82, growth: 7.3 }
+];
+
+const engagementChartData = {
+  labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+  datasets: [
+    {
+      label: 'Active Members',
+      data: [9200, 9400, 9870, 10120, 10980, 11240, 11810],
+      borderColor: 'rgba(240,68,68,1)',
+      backgroundColor: 'rgba(240,68,68,0.15)',
+      tension: 0.4,
+      fill: true,
+      borderWidth: 2,
+      pointRadius: 0
+    },
+    {
+      label: 'Workout Completions',
+      data: [7800, 8020, 8450, 8710, 9260, 9480, 9960],
+      borderColor: 'rgba(254,176,107,1)',
+      backgroundColor: 'rgba(254,176,107,0.1)',
+      tension: 0.4,
+      fill: true,
+      borderWidth: 2,
+      pointRadius: 0
+    }
+  ]
 };
 
-interface ActivityItemProps {
-  activity: {
-    id: number;
-    type: string;
-    user: string;
-    action: string;
-    time: string;
-    icon: string;
-    color: string;
-  };
-  index: number;
-}
-
-const ActivityItem: React.FC<ActivityItemProps> = ({ activity, index }) => {
-  const IconComponent = {
-    'Zap': Zap,
-    'Building': Building,
-    'Trophy': Trophy,
-    'Star': Star
-  }[activity.icon] || Activity;
-
-  const colorClasses = {
-    success: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30',
-    info: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
-    warning: 'bg-amber-500/20 text-amber-400 border-amber-500/30',
-    primary: 'bg-red-500/20 text-red-400 border-red-500/30'
-  };
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, x: -20 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ delay: index * 0.1, duration: 0.4 }}
-      className="group flex items-center space-x-4 p-4 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all duration-300"
-    >
-      <div className={`p-2.5 rounded-lg border ${colorClasses[activity.color as keyof typeof colorClasses]} group-hover:scale-110 transition-transform duration-300`}>
-        <IconComponent className="w-4 h-4" />
-      </div>
-      
-      <div className="flex-1 min-w-0">
-        <p className="text-white font-medium text-sm group-hover:text-gray-100 transition-colors duration-300">
-          <span className="text-red-400 font-semibold">{activity.user}</span> {activity.action}
-        </p>
-        <p className="text-gray-400 text-xs mt-0.5 group-hover:text-gray-300 transition-colors duration-300">
-          {activity.time}
-        </p>
-      </div>
-    </motion.div>
-  );
+const revenueChartData = {
+  labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+  datasets: [
+    {
+      label: 'Revenue (in $K)',
+      data: [310, 342, 365, 398, 421, 444, 468],
+      backgroundColor: ['rgba(240,68,68,0.85)', 'rgba(250,140,22,0.85)', 'rgba(32,201,151,0.85)', 'rgba(138,92,246,0.85)', 'rgba(240,68,68,0.85)', 'rgba(250,140,22,0.85)', 'rgba(32,201,151,0.85)'],
+      borderRadius: 16,
+      barThickness: 24
+    }
+  ]
 };
 
-interface InsightCardProps {
-  insight: {
-    label: string;
-    value: string;
-    trend: string;
-    icon: string;
-  };
-  index: number;
-}
-
-const InsightCard: React.FC<InsightCardProps> = ({ insight, index }) => {
-  const IconComponent = {
-    'Clock': Clock,
-    'Zap': Zap,
-    'Timer': Timer,
-    'Heart': Heart
-  }[insight.icon] || Target;
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.9 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ delay: index * 0.1, duration: 0.4 }}
-      whileHover={{ scale: 1.02 }}
-      className="bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 p-4 hover:bg-white/10 hover:border-white/20 transition-all duration-300 cursor-pointer"
-    >
-      <div className="flex items-center justify-between mb-3">
-        <div className="p-2 bg-gradient-to-br from-red-500 to-orange-500 rounded-lg">
-          <IconComponent className="w-4 h-4 text-white" />
-        </div>
-        <span className="text-xs text-emerald-400 font-semibold bg-emerald-400/10 px-2 py-1 rounded-full">
-          {insight.trend}
-        </span>
-      </div>
-      <h4 className="text-gray-400 text-xs font-medium mb-1">{insight.label}</h4>
-      <p className="text-white font-bold text-sm">{insight.value}</p>
-    </motion.div>
-  );
+const activityLabelMap: Record<string, string> = {
+  workout: 'Workout',
+  partnership: 'Partnership',
+  membership: 'Subscription',
+  review: 'Feedback'
 };
+
+const activityIconMap: Record<string, React.ReactNode> = {
+  workout: <Activity className="h-4 w-4 text-primary-300" />,
+  partnership: <Building className="h-4 w-4 text-emerald-300" />,
+  membership: <Users className="h-4 w-4 text-orange-300" />,
+  review: <Heart className="h-4 w-4 text-rose-300" />
+};
+
+const insightIconMap: Record<string, React.ReactNode> = {
+  clock: <Clock className="h-4 w-4 text-primary-300" />,
+  zap: <Zap className="h-4 w-4 text-orange-300" />,
+  users: <Users className="h-4 w-4 text-emerald-300" />,
+  trend: <TrendingUp className="h-4 w-4 text-violet-300" />
+};
+
+const quickActions = [
+  {
+    title: 'Member Management',
+    description: 'Review customer growth and retention cohorts.',
+    icon: <Users className="h-6 w-6 text-white" />,
+    accent: 'primary' as const,
+    href: '/dashboard/customers'
+  },
+  {
+    title: 'Partner Operations',
+    description: 'Approve new partner facilities and trainers.',
+    icon: <Building className="h-6 w-6 text-white" />,
+    accent: 'emerald' as const,
+    href: '/dashboard/partners'
+  },
+  {
+    title: 'Analytics Studio',
+    description: 'Deep-dive into KPIs, funnels, and retention.',
+    icon: <TrendingUp className="h-6 w-6 text-white" />,
+    accent: 'orange' as const,
+    href: '/dashboard/analytics'
+  },
+  {
+    title: 'Content Programs',
+    description: 'Publish workouts and orchestrate challenges.',
+    icon: <Award className="h-6 w-6 text-white" />,
+    accent: 'violet' as const,
+    href: '/dashboard/programs'
+  }
+];
 
 const DashboardOverview: React.FC = () => {
+  const headerStats = useMemo(
+    () => [
+      {
+        label: 'Sessions Today',
+        value: mockData.keyMetrics.todayWorkouts,
+        helperText: 'Peak demand expected 6-9 PM'
+      },
+      {
+        label: 'Avg Rating',
+        value: mockData.keyMetrics.avgRating.toFixed(1),
+        helperText: 'Across 12.4K verified reviews'
+      },
+      {
+        label: 'Retention',
+        value: '83%',
+        helperText: 'Rolling 30-day customer retention'
+      }
+    ],
+    []
+  );
+
+  const statCards = useMemo(
+    () => [
+      {
+        label: 'Total Members',
+        value: formatCompactNumber(mockData.keyMetrics.totalMembers),
+        icon: <Users className="h-5 w-5 text-white" />,
+        change: '+12.5%',
+        changeDirection: 'up' as const,
+        helperText: '1.2k joined this week',
+        tone: 'primary' as const
+      },
+      {
+        label: 'Active Members',
+        value: formatCompactNumber(mockData.keyMetrics.activeMembers),
+        icon: <UserCheck className="h-5 w-5 text-white" />,
+        change: '+8.2%',
+        changeDirection: 'up' as const,
+        helperText: '82% daily streak maintained',
+        tone: 'orange' as const
+      },
+      {
+        label: 'Partner Facilities',
+        value: mockData.keyMetrics.partnerFacilities,
+        icon: <Building className="h-5 w-5 text-white" />,
+        change: '+15.7%',
+        changeDirection: 'up' as const,
+        helperText: '12 new partners this month',
+        tone: 'emerald' as const
+      },
+      {
+        label: 'Monthly Revenue',
+        value: formatCurrency(mockData.keyMetrics.monthlyRevenue),
+        icon: <DollarSign className="h-5 w-5 text-white" />,
+        change: '+23.1%',
+        changeDirection: 'up' as const,
+        helperText: 'Closed 39 enterprise deals',
+        tone: 'violet' as const
+      },
+      {
+        label: 'Completion Rate',
+        value: `${mockData.keyMetrics.completionRate}%`,
+        icon: <Target className="h-5 w-5 text-white" />,
+        change: '+5.3%',
+        changeDirection: 'up' as const,
+        helperText: 'Daily schedule adoption surge',
+        tone: 'emerald' as const
+      }
+    ],
+    []
+  );
+
   return (
-    <div className="space-y-8">
-      {/* Hero Section */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="relative bg-gradient-to-br from-red-600/20 via-orange-600/20 to-red-500/20 backdrop-blur-md rounded-3xl border border-white/20 p-8 overflow-hidden"
-      >
-        {/* Background decoration */}
-        <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 via-orange-500/5 to-red-600/5" />
-        <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-red-400/10 to-orange-600/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 left-0 w-64 h-64 bg-gradient-to-tr from-red-400/10 to-orange-600/10 rounded-full blur-3xl" />
-        
-        <div className="relative z-10 flex items-center justify-between">
-          <div className="flex items-center space-x-6">
-            <motion.div
-              whileHover={{ scale: 1.05, rotate: 5 }}
-              className="flex items-center justify-center w-16 h-16 bg-gradient-to-br from-red-500 to-orange-600 rounded-2xl shadow-xl"
-            >
-              <Dumbbell className="w-8 h-8 text-white" />
-            </motion.div>
-            
-            <div>
-              <h1 className="text-4xl font-bold text-white mb-2">
-                FitVire Dashboard
-              </h1>
-              <p className="text-gray-300 text-lg">
-                Your fitness platform at a glance
-              </p>
-            </div>
+    <PageContainer className="gap-8 text-neutral">
+      <PageHeader
+        title="Dashboard Overview"
+        description="Central command center for FitVire performance, retention, and growth."
+        icon={<Dumbbell className="h-8 w-8 text-white" />}
+        breadcrumbs={[
+          { label: 'Dashboard', href: '/dashboard' },
+          { label: 'Overview' }
+        ]}
+        stats={headerStats}
+        actions={
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <Button variant="outline" size="md" icon={<Download className="h-4 w-4" />}>
+              Export Report
+            </Button>
+            <Button variant="primary" size="md" icon={<PlusCircle className="h-4 w-4" />}>
+              New Initiative
+            </Button>
           </div>
+        }
+      />
 
-          <div className="hidden md:flex items-center space-x-6">
-            <div className="text-center">
-              <div className="text-2xl font-bold text-white">{mockData.keyMetrics.todayWorkouts}</div>
-              <div className="text-xs text-gray-400">Workouts Today</div>
-            </div>
-            <div className="w-px h-12 bg-white/20" />
-            <div className="text-center">
-              <div className="text-2xl font-bold text-white">{mockData.keyMetrics.avgRating}</div>
-              <div className="text-xs text-gray-400">Avg Rating</div>
-            </div>
-          </div>
-        </div>
-      </motion.div>
-
-      {/* Key Metrics Grid */}
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        <MetricCard
-          title="Total Members"
-          value={mockData.keyMetrics.totalMembers}
-          icon={<Users className="w-6 h-6 text-white" />}
-          change="+12.5%"
-          gradient="from-red-500 to-red-600"
-          delay={0}
-        />
-        
-        <MetricCard
-          title="Active Members"
-          value={mockData.keyMetrics.activeMembers}
-          icon={<UserCheck className="w-6 h-6 text-white" />}
-          change="+8.2%"
-          gradient="from-orange-500 to-red-500"
-          delay={0.1}
-        />
-        
-        <MetricCard
-          title="Partner Facilities"
-          value={mockData.keyMetrics.partnerFacilities}
-          icon={<Building className="w-6 h-6 text-white" />}
-          change="+15.7%"
-          gradient="from-red-500 to-orange-600"
-          delay={0.2}
-        />
+      <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+        {statCards.map((card, index) => (
+          <StatCard
+            key={card.label}
+            label={card.label}
+            value={card.value}
+            icon={card.icon}
+            change={card.change}
+            changeDirection={card.changeDirection}
+            helperText={card.helperText}
+            tone={card.tone}
+            delay={index * 0.06}
+          />
+        ))}
       </div>
 
-      {/* Secondary Metrics */}
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-        <MetricCard
-          title="Monthly Revenue"
-          value={`$${(mockData.keyMetrics.monthlyRevenue / 1000).toFixed(0)}K`}
-          icon={<DollarSign className="w-6 h-6 text-white" />}
-          change="+23.1%"
-          gradient="from-amber-500 to-orange-600"
-          delay={0}
-        />
-        
-        <MetricCard
-          title="Total Workouts"
-          value={`${(mockData.workoutStats.totalWorkouts / 1000).toFixed(0)}K`}
-          icon={<Activity className="w-6 h-6 text-white" />}
-          change="+18.4%"
-          gradient="from-red-500 to-red-600"
-          delay={0.1}
-        />
-        
-        <MetricCard
-          title="Completion Rate"
-          value={`${mockData.workoutStats.completionRate}%`}
-          icon={<Target className="w-6 h-6 text-white" />}
-          change="+5.3%"
-          gradient="from-green-500 to-emerald-600"
-          delay={0.2}
-        />
-        
-        <MetricCard
-          title="Avg Duration"
-          value={`${mockData.workoutStats.avgDuration}min`}
-          icon={<Clock className="w-6 h-6 text-white" />}
-          change="+2.1%"
-          gradient="from-orange-500 to-orange-600"
-          delay={0.3}
-        />
-      </div>
-
-      {/* Main Content Grid */}
-      <div className="grid gap-6 lg:grid-cols-3">
-        {/* Recent Activities */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="lg:col-span-2 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 p-6"
+      <div className="grid gap-6 xl:grid-cols-3">
+        <SectionCard
+          className="xl:col-span-2"
+          title="Engagement Pulse"
+          description="Monitor how members move through workouts, streaks, and conversion windows."
+          icon={<Activity className="h-5 w-5 text-primary-200" />}
         >
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-bold text-white flex items-center space-x-2">
-              <Activity className="w-5 h-5" />
-              <span>Recent Activity</span>
-            </h2>
-            <button className="text-red-400 hover:text-red-300 text-sm font-medium flex items-center space-x-1 transition-colors duration-200">
-              <span>View All</span>
-              <ChevronRight className="w-4 h-4" />
-            </button>
-          </div>
-          
-          <div className="space-y-3">
-            {mockData.recentActivities.map((activity, index) => (
-              <ActivityItem key={activity.id} activity={activity} index={index} />
-            ))}
-          </div>
-        </motion.div>
-
-        {/* Quick Insights */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 p-6"
-        >
-          <h2 className="text-xl font-bold text-white mb-6 flex items-center space-x-2">
-            <TrendingUp className="w-5 h-5" />
-            <span>Quick Insights</span>
-          </h2>
-          
-          <div className="space-y-4">
-            {mockData.quickInsights.map((insight, index) => (
-              <InsightCard key={insight.label} insight={insight} index={index} />
-            ))}
-          </div>
-        </motion.div>
-      </div>
-
-      {/* Quick Actions */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.5 }}
-        className="bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 p-6"
-      >
-        <h2 className="text-xl font-bold text-white mb-6 flex items-center space-x-2">
-          <Zap className="w-5 h-5" />
-          <span>Quick Actions</span>
-        </h2>
-        
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          {[
-            { 
-              title: 'Member Management', 
-              desc: 'Manage customer accounts', 
-              icon: Users, 
-              gradient: 'from-red-500 to-red-600',
-              href: '/members'
-            },
-            { 
-              title: 'Partner Network', 
-              desc: 'Review facility partnerships', 
-              icon: Building, 
-              gradient: 'from-emerald-500 to-emerald-600',
-              href: '/partners'
-            },
-            { 
-              title: 'Analytics', 
-              desc: 'Platform insights & metrics', 
-              icon: TrendingUp, 
-              gradient: 'from-orange-500 to-orange-600',
-              href: '/analytics'
-            },
-            { 
-              title: 'Workout Content', 
-              desc: 'Manage fitness programs', 
-              icon: Award, 
-              gradient: 'from-amber-500 to-orange-600',
-              href: '/workouts'
-            }
-          ].map((action, index) => (
-            <motion.button
-              key={action.title}
-              whileHover={{ scale: 1.02, y: -2 }}
-              whileTap={{ scale: 0.98 }}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 * index }}
-              className="group p-6 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 text-left hover:bg-white/10 hover:border-white/20 transition-all duration-300"
-            >
-              <div className={`w-12 h-12 bg-gradient-to-br ${action.gradient} rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300 shadow-lg`}>
-                <action.icon className="w-6 h-6 text-white" />
+          <div className="grid gap-4 sm:grid-cols-3">
+            {engagementHighlights.map((highlight) => (
+              <div
+                key={highlight.id}
+                className="rounded-xl border border-white/10 bg-white/5 p-4 backdrop-blur-sm"
+              >
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-neutral/60">
+                  {highlight.label}
+                </p>
+                <p className="mt-2 text-2xl font-semibold text-white">{highlight.value}</p>
+                <p className="text-xs text-neutral/60">{highlight.caption}</p>
               </div>
-              <h3 className="font-semibold text-white mb-2 group-hover:text-gray-100 transition-colors duration-300">
-                {action.title}
-              </h3>
-              <p className="text-sm text-gray-400 group-hover:text-gray-300 transition-colors duration-300">
-                {action.desc}
-              </p>
-            </motion.button>
+            ))}
+          </div>
+          <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
+            <LineChart
+              data={engagementChartData}
+              height={260}
+              className="bg-transparent border-none p-0 shadow-none"
+            />
+          </div>
+        </SectionCard>
+
+        <SectionCard
+          title="Revenue Streams"
+          description="Breakdown of the initiatives driving recurring revenue."
+          icon={<DollarSign className="h-5 w-5 text-emerald-200" />}
+        >
+          <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
+            <BarChart
+              data={revenueChartData}
+              height={260}
+              className="bg-transparent border-none p-0 shadow-none"
+            />
+          </div>
+          <div className="space-y-3">
+            {revenuePrograms.map((program) => (
+              <div
+                key={program.id}
+                className="flex items-center justify-between rounded-xl border border-white/10 bg-white/5 px-4 py-3"
+              >
+                <div>
+                  <p className="text-sm font-semibold text-white">{program.label}</p>
+                  <p className="text-xs text-neutral/60">${program.value}K this month</p>
+                </div>
+                <span className="flex items-center gap-1 text-sm font-semibold text-emerald-300">
+                  <ArrowUpRight className="h-4 w-4" />
+                  {program.growth}%
+                </span>
+              </div>
+            ))}
+          </div>
+        </SectionCard>
+      </div>
+
+      <div className="grid gap-6 lg:grid-cols-3">
+        <SectionCard
+          className="lg:col-span-2"
+          title="Latest Activity"
+          description="Real-time events across customers, partners, and operations."
+          icon={<Activity className="h-5 w-5 text-primary-200" />}
+        >
+          <div className="space-y-3">
+            {mockData.recentActivities.map((activity) => (
+              <div
+                key={activity.id}
+                className="flex items-center gap-4 rounded-xl border border-white/10 bg-white/5 p-4"
+              >
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-500/10">
+                  {activityIconMap[activity.type] ?? <Activity className="h-4 w-4 text-primary-300" />}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-medium text-white">
+                    <span className="text-primary-300">{activity.user}</span> {activity.action}
+                  </p>
+                  <p className="text-xs text-neutral/60">{activity.time}</p>
+                </div>
+                <span className="text-xs font-semibold uppercase tracking-wide text-neutral/60">
+                  {activityLabelMap[activity.type] ?? activity.type}
+                </span>
+              </div>
+            ))}
+          </div>
+        </SectionCard>
+
+        <SectionCard
+          title="Quick Insights"
+          description="Signals that highlight engagement momentum at a glance."
+          icon={<TrendingUp className="h-5 w-5 text-orange-200" />}
+        >
+          <div className="space-y-4">
+            {mockData.quickInsights.map((insight) => (
+              <div
+                key={insight.label}
+                className="flex items-center justify-between rounded-xl border border-white/10 bg-white/5 px-4 py-3"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-500/10">
+                    {insightIconMap[insight.icon] ?? <Heart className="h-4 w-4 text-primary-300" />}
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-white">{insight.label}</p>
+                    <p className="text-xs text-neutral/60">{insight.value}</p>
+                  </div>
+                </div>
+                <span className="text-xs font-semibold text-emerald-300">{insight.trend}</span>
+              </div>
+            ))}
+          </div>
+        </SectionCard>
+      </div>
+
+      <SectionCard
+        title="Quick Actions"
+        description="Jump into the highest-impact workflows for today."
+        icon={<Zap className="h-5 w-5 text-primary-200" />}
+      >
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          {quickActions.map((action) => (
+            <QuickActionCard
+              key={action.title}
+              title={action.title}
+              description={action.description}
+              icon={action.icon}
+              accent={action.accent}
+              href={action.href}
+            />
           ))}
         </div>
-      </motion.div>
+      </SectionCard>
 
-      {/* TODO: Development Status Notice */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.6 }}
-        className="bg-gradient-to-r from-amber-500/20 to-orange-500/20 backdrop-blur-md rounded-2xl border border-amber-500/30 p-6"
+      <SectionCard
+        title="Release Readiness"
+        description="Track the status of pre-launch deliverables across the organisation."
+        icon={<Trophy className="h-5 w-5 text-amber-200" />}
+        tone="warning"
       >
-        <div className="flex items-center space-x-3 mb-4">
-          <div className="p-2 bg-amber-500/20 rounded-lg">
-            <Trophy className="w-5 h-5 text-amber-400" />
-          </div>
-          <h3 className="text-amber-400 font-bold text-lg">Development Status</h3>
-        </div>
-        
-        <div className="grid md:grid-cols-2 gap-4 text-sm">
+        <div className="grid gap-4 text-sm text-neutral/70 md:grid-cols-2">
           <div className="space-y-2">
-            <div className="flex items-center space-x-2">
-              <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
-              <span className="text-gray-300">✅ Dashboard redesign complete</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
-              <span className="text-gray-300">✅ Modern UI/UX implementation</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
-              <span className="text-gray-300">✅ Viewport height & scrolling fixed</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
-              <span className="text-gray-300">✅ Custom scrollbar styling</span>
-            </div>
+            {['Dashboard redesign complete', 'Modern UI/UX implementation', 'Viewport + scrolling polish', 'Custom scrollbar styling'].map((item) => (
+              <div key={item} className="flex items-center gap-2">
+                <span className="inline-flex h-2 w-2 rounded-full bg-emerald-400" />
+                <span>{item}</span>
+              </div>
+            ))}
           </div>
           <div className="space-y-2">
-            <div className="flex items-center space-x-2">
-              <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse" />
-              <span className="text-gray-300">🔄 API integration (in progress)</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-2 h-2 bg-amber-400 rounded-full animate-pulse" />
-              <span className="text-gray-300">⏳ Real-time data (planned)</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-2 h-2 bg-amber-400 rounded-full animate-pulse" />
-              <span className="text-gray-300">⏳ Advanced analytics (planned)</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
-              <span className="text-gray-300">✅ Responsive layout optimization</span>
-            </div>
+            {['API integration (in progress)', 'Real-time data (planned)', 'Advanced analytics (planned)', 'QA regression pass'].map((item) => (
+              <div key={item} className="flex items-center gap-2">
+                <span className="inline-flex h-2 w-2 rounded-full bg-warning-500" />
+                <span>{item}</span>
+              </div>
+            ))}
           </div>
         </div>
-        
-        <p className="text-xs text-amber-400/70 mt-4">
-          TODO: Remove this development notice in production
-        </p>
-      </motion.div>
-
-      {/* Additional content to test scrolling */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.7 }}
-        className="bg-white/5 backdrop-blur-md rounded-2xl border border-white/10 p-6"
-      >
-        <h3 className="text-white font-bold text-lg mb-4">Scrolling Test Content</h3>
-        <p className="text-gray-300 mb-4">
-          This section demonstrates the viewport height and scrolling functionality. 
-          The content area now has proper height constraints and smooth scrolling behavior, 
-          just like the sidebar.
-        </p>
-        
-        <div className="grid md:grid-cols-3 gap-4">
-          {Array.from({ length: 6 }, (_, i) => (
-            <div key={i} className="bg-white/5 rounded-lg p-4">
-              <h4 className="text-white font-semibold mb-2">Test Card {i + 1}</h4>
-              <p className="text-gray-400 text-sm">
-                Sample content to demonstrate scrollable viewport functionality with proper height management.
-              </p>
-            </div>
-          ))}
-        </div>
-      </motion.div>
-    </div>
+        <p className="text-xs text-warning-400/80">TODO: Remove this notice in production.</p>
+      </SectionCard>
+    </PageContainer>
   );
 };
 

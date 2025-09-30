@@ -5,6 +5,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
+import clsx from 'clsx';
 import GlassCard from '../ui/GlassCard';
 
 interface AuthLayoutProps {
@@ -12,22 +13,38 @@ interface AuthLayoutProps {
   title: string;
   subtitle?: string;
   showLogo?: boolean;
+  backgroundClassName?: string;
+  showBackgroundDecor?: boolean;
+  cardClassName?: string;
 }
 
 export const AuthLayout: React.FC<AuthLayoutProps> = ({
   children,
   title,
   subtitle,
-  showLogo = true
+  showLogo = true,
+  backgroundClassName,
+  showBackgroundDecor = true,
+  cardClassName
 }) => {
+  const containerClasses = clsx(
+    'h-[100dvh] min-h-[100dvh] w-full flex items-center justify-center p-4 relative overflow-hidden overflow-y-auto',
+    backgroundClassName ?? 'bg-background'
+  );
+
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4 relative overflow-hidden">
+    <div className={containerClasses}>
       {/* Background gradient effects */}
-      <div className="absolute inset-0 bg-gradient-to-br from-primary-900/20 via-background to-background" />
-      
-      {/* Animated background elements */}
-      <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-primary-500/10 rounded-full blur-3xl animate-float" />
-      <div className="absolute bottom-1/4 right-1/4 w-48 h-48 bg-primary-600/10 rounded-full blur-3xl animate-float" style={{ animationDelay: '2s' }} />
+      {showBackgroundDecor && (
+        <>
+          <div className="absolute inset-0 bg-gradient-to-br from-primary-900/20 via-background to-background" />
+          <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-primary-500/10 rounded-full blur-3xl animate-float" />
+          <div
+            className="absolute bottom-1/4 right-1/4 w-48 h-48 bg-primary-600/10 rounded-full blur-3xl animate-float"
+            style={{ animationDelay: '2s' }}
+          />
+        </>
+      )}
       
       {/* Main content */}
       <motion.div
@@ -57,7 +74,7 @@ export const AuthLayout: React.FC<AuthLayoutProps> = ({
         )}
 
         {/* Auth form card */}
-        <GlassCard className="relative">
+        <GlassCard className={clsx('relative', cardClassName)}>
           {/* Header */}
           <motion.div
             initial={{ opacity: 0 }}

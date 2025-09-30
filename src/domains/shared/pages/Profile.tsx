@@ -29,6 +29,7 @@ import Button from '../components/ui/Button';
 import Badge from '../components/ui/Badge';
 import Input from '../components/ui/Input';
 import GlassCard from '../components/ui/GlassCard';
+import PageContainer from '../components/layout/PageContainer';
 
 interface ProfileData {
   // Personal Information
@@ -201,7 +202,7 @@ const Profile: React.FC = () => {
   };
 
   return (
-    <div className="space-y-8">
+    <PageContainer className="gap-8">
       {/* Header Section */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
@@ -230,15 +231,17 @@ const Profile: React.FC = () => {
           </div>
           
           <div>
-            <h1 className="text-3xl font-bold text-white mb-2">
+            <h1 className="text-4xl font-bold text-white mb-3 font-display">
               {profile.firstName} {profile.lastName}
             </h1>
-            <div className="flex items-center space-x-3 mb-3">
-              <Badge variant="success" className="px-3 py-1">{profile.role}</Badge>
+            <div className="flex items-center space-x-3 mb-4">
+              <Badge variant="success" size="md" className="px-4 py-2 font-semibold uppercase tracking-wide">
+                {profile.role}
+              </Badge>
               <span className="text-neutral/40">•</span>
-              <span className="text-neutral/80">{profile.department}</span>
+              <span className="text-neutral/80 text-lg">{profile.department}</span>
             </div>
-            <p className="text-neutral/70 text-sm max-w-md leading-relaxed">
+            <p className="text-neutral/80 text-base max-w-md leading-relaxed">
               {profile.bio}
             </p>
           </div>
@@ -248,38 +251,49 @@ const Profile: React.FC = () => {
         <div className="flex items-center space-x-3">
           {isEditing ? (
             <>
-              <Button variant="ghost" size="lg" onClick={handleCancel}>
-                Cancel
-              </Button>
-              <Button
-                variant="primary"
-                size="lg"
-                onClick={handleSave}
-                icon={<Save className="w-5 h-5" />}
-                disabled={!hasChanges}
-                loading={false}
-              >
-                Save Changes
-              </Button>
+              <motion.div whileHover={{ scale: 1.02 }}>
+                <Button variant="ghost" size="lg" onClick={handleCancel} className="border border-glass-border hover:bg-surface/60">
+                  Cancel
+                </Button>
+              </motion.div>
+              <motion.div whileHover={{ scale: 1.02 }}>
+                <Button
+                  variant="primary"
+                  size="lg"
+                  onClick={handleSave}
+                  icon={<Save className="w-5 h-5" />}
+                  disabled={!hasChanges}
+                  loading={false}
+                  className="bg-gradient-to-r from-primary to-primary-hover hover:shadow-lg hover:shadow-primary/25"
+                >
+                  Save Changes
+                </Button>
+              </motion.div>
             </>
           ) : (
             <>
-              <Button
-                variant="outline"
-                size="lg"
-                icon={<Settings className="w-5 h-5" />}
-                onClick={() => {/* TODO: Navigate to settings */}}
-              >
-                Settings
-              </Button>
-              <Button
-                variant="primary"
-                size="lg"
-                onClick={() => setIsEditing(true)}
-                icon={<Edit className="w-5 h-5" />}
-              >
-                Edit Profile
-              </Button>
+              <motion.div whileHover={{ scale: 1.02 }}>
+                <Button
+                  variant="outline"
+                  size="lg"
+                  icon={<Settings className="w-5 h-5" />}
+                  onClick={() => {/* TODO: Navigate to settings */}}
+                  className="border-glass-border text-neutral hover:bg-surface/60 hover:border-primary/30"
+                >
+                  Settings
+                </Button>
+              </motion.div>
+              <motion.div whileHover={{ scale: 1.02 }}>
+                <Button
+                  variant="primary"
+                  size="lg"
+                  onClick={() => setIsEditing(true)}
+                  icon={<Edit className="w-5 h-5" />}
+                  className="bg-gradient-to-r from-primary to-primary-hover hover:shadow-lg hover:shadow-primary/25"
+                >
+                  Edit Profile
+                </Button>
+              </motion.div>
             </>
           )}
         </div>
@@ -472,46 +486,54 @@ const Profile: React.FC = () => {
           description="Manage your account security and authentication settings"
         >
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <Button 
-              variant="outline" 
-              size="lg"
-              icon={<Key className="w-5 h-5" />}
-              className="h-14"
-              onClick={() => {/* TODO: Implement change password */}}
-            >
-              Change Password
-            </Button>
-            <Button 
-              variant="outline" 
-              size="lg"
-              icon={<Shield className="w-5 h-5" />}
-              className="h-14"
-              onClick={() => {/* TODO: Implement 2FA toggle */}}
-            >
-              {profile.twoFactorEnabled ? 'Disable 2FA' : 'Enable 2FA'}
-            </Button>
-            <Button 
-              variant="outline" 
-              size="lg"
-              icon={<Activity className="w-5 h-5" />}
-              className="h-14"
-              onClick={() => {/* TODO: Implement login history */}}
-            >
-              Login History
-            </Button>
-            <Button 
-              variant="outline" 
-              size="lg"
-              icon={<LogOut className="w-5 h-5" />}
-              className="h-14"
-              onClick={() => {/* TODO: Implement logout all sessions */}}
-            >
-              End All Sessions
-            </Button>
+            <motion.div whileHover={{ scale: 1.02, y: -2 }}>
+              <Button 
+                variant="outline" 
+                size="lg"
+                icon={<Key className="w-5 h-5" />}
+                className="h-16 border-glass-border text-neutral hover:bg-surface/60 hover:border-primary/30 w-full"
+                onClick={() => {/* TODO: Implement change password */}}
+              >
+                Change Password
+              </Button>
+            </motion.div>
+            <motion.div whileHover={{ scale: 1.02, y: -2 }}>
+              <Button 
+                variant="outline" 
+                size="lg"
+                icon={<Shield className="w-5 h-5" />}
+                className="h-16 border-glass-border text-neutral hover:bg-surface/60 hover:border-primary/30 w-full"
+                onClick={() => {/* TODO: Implement 2FA toggle */}}
+              >
+                {profile.twoFactorEnabled ? 'Disable 2FA' : 'Enable 2FA'}
+              </Button>
+            </motion.div>
+            <motion.div whileHover={{ scale: 1.02, y: -2 }}>
+              <Button 
+                variant="outline" 
+                size="lg"
+                icon={<Activity className="w-5 h-5" />}
+                className="h-16 border-glass-border text-neutral hover:bg-surface/60 hover:border-primary/30 w-full"
+                onClick={() => {/* TODO: Implement login history */}}
+              >
+                Login History
+              </Button>
+            </motion.div>
+            <motion.div whileHover={{ scale: 1.02, y: -2 }}>
+              <Button 
+                variant="outline" 
+                size="lg"
+                icon={<LogOut className="w-5 h-5" />}
+                className="h-16 border-glass-border text-neutral hover:bg-surface/60 hover:border-primary/30 w-full"
+                onClick={() => {/* TODO: Implement logout all sessions */}}
+              >
+                End All Sessions
+              </Button>
+            </motion.div>
           </div>
         </InfoCard>
       </motion.div>
-    </div>
+    </PageContainer>
   );
 };
 

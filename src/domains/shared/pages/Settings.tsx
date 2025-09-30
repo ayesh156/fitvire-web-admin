@@ -33,6 +33,7 @@ import Button from '../components/ui/Button';
 import Input from '../components/ui/Input';
 import GlassCard from '../components/ui/GlassCard';
 import Badge from '../components/ui/Badge';
+import PageContainer from '../components/layout/PageContainer';
 
 interface SettingsData {
   // Profile Settings
@@ -309,7 +310,7 @@ const Settings: React.FC = () => {
   };
 
   return (
-    <div className="space-y-8">
+    <PageContainer className="gap-8">
       {/* Header Section */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
@@ -317,12 +318,12 @@ const Settings: React.FC = () => {
         className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6"
       >
         <div className="flex items-center space-x-4">
-          <div className="p-3 bg-primary/20 rounded-2xl">
-            <SettingsIcon className="w-8 h-8 text-primary" />
+          <div className="p-4 bg-primary/20 rounded-3xl">
+            <SettingsIcon className="w-10 h-10 text-primary" />
           </div>
           <div>
-            <h1 className="text-3xl font-bold text-white">Settings</h1>
-            <p className="text-neutral/70">Configure your admin dashboard preferences and system settings</p>
+            <h1 className="text-4xl font-bold text-white font-display">Settings</h1>
+            <p className="text-neutral/80 text-lg">Configure your admin dashboard preferences and system settings</p>
           </div>
         </div>
 
@@ -334,33 +335,42 @@ const Settings: React.FC = () => {
               animate={{ opacity: 1, scale: 1 }}
               className="flex items-center space-x-3"
             >
-              <Button
-                variant="ghost"
-                onClick={handleReset}
-                icon={<RotateCcw className="w-4 h-4" />}
-                size="lg"
-              >
-                Reset
-              </Button>
-              <Button
-                variant="primary"
-                onClick={handleSave}
-                icon={<Save className="w-4 h-4" />}
-                loading={saveLoading}
-                size="lg"
-              >
-                Save Changes
-              </Button>
+              <motion.div whileHover={{ scale: 1.02 }}>
+                <Button
+                  variant="ghost"
+                  onClick={handleReset}
+                  icon={<RotateCcw className="w-4 h-4" />}
+                  size="lg"
+                  className="border border-glass-border hover:bg-surface/60 hover:border-primary/30"
+                >
+                  Reset
+                </Button>
+              </motion.div>
+              <motion.div whileHover={{ scale: 1.02 }}>
+                <Button
+                  variant="primary"
+                  onClick={handleSave}
+                  icon={<Save className="w-4 h-4" />}
+                  loading={saveLoading}
+                  size="lg"
+                  className="bg-gradient-to-r from-primary to-primary-hover hover:shadow-lg hover:shadow-primary/25"
+                >
+                  Save Changes
+                </Button>
+              </motion.div>
             </motion.div>
           )}
-          <Button
-            variant="outline"
-            onClick={handleRestoreDefaults}
-            icon={<RotateCcw className="w-4 h-4" />}
-            size="lg"
-          >
-            Restore Defaults
-          </Button>
+          <motion.div whileHover={{ scale: 1.02 }}>
+            <Button
+              variant="outline"
+              onClick={handleRestoreDefaults}
+              icon={<RotateCcw className="w-4 h-4" />}
+              size="lg"
+              className="border-glass-border text-neutral hover:bg-surface/60 hover:border-primary/30"
+            >
+              Restore Defaults
+            </Button>
+          </motion.div>
         </div>
       </motion.div>
 
@@ -656,24 +666,30 @@ const Settings: React.FC = () => {
         transition={{ delay: 0.6 }}
         className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-8 border-t border-glass-border"
       >
-        <Button
-          variant="outline"
-          size="lg"
-          icon={<Download className="w-5 h-5" />}
-          onClick={() => {/* TODO: Export settings */}}
-        >
-          Export Settings
-        </Button>
-        <Button
-          variant="outline"
-          size="lg"
-          icon={<Upload className="w-5 h-5" />}
-          onClick={() => {/* TODO: Import settings */}}
-        >
-          Import Settings
-        </Button>
+        <motion.div whileHover={{ scale: 1.02, y: -2 }}>
+          <Button
+            variant="outline"
+            size="lg"
+            icon={<Download className="w-5 h-5" />}
+            onClick={() => {/* TODO: Export settings */}}
+            className="border-glass-border text-neutral hover:bg-surface/60 hover:border-primary/30 min-w-[180px]"
+          >
+            Export Settings
+          </Button>
+        </motion.div>
+        <motion.div whileHover={{ scale: 1.02, y: -2 }}>
+          <Button
+            variant="outline"
+            size="lg"
+            icon={<Upload className="w-5 h-5" />}
+            onClick={() => {/* TODO: Import settings */}}
+            className="border-glass-border text-neutral hover:bg-surface/60 hover:border-primary/30 min-w-[180px]"
+          >
+            Import Settings
+          </Button>
+        </motion.div>
       </motion.div>
-    </div>
+    </PageContainer>
   );
 };
 

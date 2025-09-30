@@ -4,8 +4,19 @@
  */
 
 import React, { forwardRef, useState } from 'react';
+import clsx from 'clsx';
 import { motion } from 'framer-motion';
 import { EyeIcon, EyeOffIcon, AlertCircleIcon } from 'lucide-react';
+
+import {
+  helperTextClass,
+  inputBaseClass,
+  inputLabelClass,
+  inputSizeClass,
+  inputVariantClass,
+  type InputSize,
+  type InputVariant
+} from './componentThemes';
 
 interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'> {
   label?: string;
@@ -13,133 +24,110 @@ interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, '
   helperText?: string;
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
-  size?: 'sm' | 'md' | 'lg';
-  variant?: 'default' | 'filled';
+  size?: InputSize;
+  variant?: InputVariant;
   showPasswordToggle?: boolean;
   fullWidth?: boolean;
 }
 
-// Size styles
-const sizeStyles = {
-  sm: 'px-3 py-2 text-sm',
-  md: 'px-4 py-3 text-base',
-  lg: 'px-5 py-4 text-lg'
-};
+export const Input = forwardRef<HTMLInputElement, InputProps>(
+  (
+    {
+      label,
+      error,
+      helperText,
+      leftIcon,
+      rightIcon,
+      size = 'md',
+      variant = 'default',
+      showPasswordToggle = false,
+      fullWidth = true,
+      type = 'text',
+      className,
+      disabled,
+      ...props
+    },
+    ref
+  ) => {
+    const [showPassword, setShowPassword] = useState(false);
+    const [isFocused, setIsFocused] = useState(false);
 
-export const Input = forwardRef<HTMLInputElement, InputProps>(({
-  label,
-  error,
-  helperText,
-  leftIcon,
-  rightIcon,
-  size = 'md',
-  variant = 'default',
-  showPasswordToggle = false,
-  fullWidth = true,
-  type = 'text',
-  className = '',
-  disabled,
-  ...props
-}, ref) => {
-  const [showPassword, setShowPassword] = useState(false);
-  const [isFocused, setIsFocused] = useState(false);
+    const inputType = type === 'password' && showPasswordToggle && showPassword ? 'text' : type;
 
-  const inputType = type === 'password' && showPasswordToggle && showPassword ? 'text' : type;
+    const inputClasses = clsx(
+      inputBaseClass,
+      inputVariantClass[variant],
+      inputSizeClass[size],
+      error && 'border-error-500 focus-visible:ring-error-500/40 focus-visible:ring-offset-background',
+      leftIcon && 'pl-12',
+      (rightIcon || showPasswordToggle || error) && 'pr-12',
+      disabled && 'opacity-50 cursor-not-allowed',
+      className
+    );
 
-  const baseInputClasses = [
-    'w-full rounded-lg border transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background',
-    sizeStyles[size],
-    variant === 'default' 
-      ? 'bg-transparent border-glass-border focus:border-primary-500 focus:ring-primary-500/20' 
-      : 'bg-surface border-surface focus:border-primary-500 focus:ring-primary-500/20',
-    error 
-      ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20' 
-      : 'hover:border-primary-500/50',
-    disabled && 'opacity-50 cursor-not-allowed',
-    leftIcon && 'pl-10',
-    (rightIcon || showPasswordToggle) && 'pr-10',
-    className
-  ].filter(Boolean).join(' ');
+    const labelColor = error ? '#ef4444' : isFocused ? '#F04444' : undefined;
 
-  const containerClasses = [
-    fullWidth ? 'w-full' : 'w-auto',
-    'relative'
-  ].join(' ');
-
-  return (
-    <div className={containerClasses}>
-      {label && (
-        <motion.label
-          animate={{
-            color: error ? '#ef4444' : isFocused ? '#F04444' : '#D9D9D9'
-          }}
-          className="block text-sm font-medium mb-2 transition-colors duration-200"
-        >
-          {label}
-        </motion.label>
-      )}
-      
-      <div className="relative">
-        {leftIcon && (
-          <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral pointer-events-none">
-            {leftIcon}
-          </div>
+    return (
+      <div className={clsx(fullWidth ? 'w-full' : 'w-auto', 'space-y-1')}>
+        {label && (
+          <motion.label
+            animate={{ color: labelColor }}
+            className={inputLabelClass}
+          >
+            {label}
+          </motion.label>
         )}
-        
-        <input
-          ref={ref}
-          type={inputType}
-          className={baseInputClasses}
-          disabled={disabled}
-          onFocus={() => setIsFocused(true)}
-          onBlur={() => setIsFocused(false)}
-          {...props}
-        />
-        
-        {/* Right side icons */}
-        <div className="absolute right-3 top-1/2 transform -translate-y-1/2 flex items-center gap-1">
-          {error && (
-            <AlertCircleIcon className="h-4 w-4 text-red-500" />
+
+        <div className="relative">
+          {leftIcon && (
+            <span className="pointer-events-none absolute inset-y-0 left-4 flex items-center text-neutral/60">
+              {leftIcon}
+            </span>
           )}
-          
-          {showPasswordToggle && type === 'password' && (
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="text-neutral hover:text-primary-500 transition-colors duration-200"
-              tabIndex={-1}
-            >
-              {showPassword ? (
-                <EyeOffIcon className="h-4 w-4" />
-              ) : (
-                <EyeIcon className="h-4 w-4" />
-              )}
-            </button>
-          )}
-          
-          {rightIcon && !error && (
-            <div className="text-neutral">
-              {rightIcon}
-            </div>
-          )}
+
+          <input
+            ref={ref}
+            type={inputType}
+            className={inputClasses}
+            disabled={disabled}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
+            {...props}
+          />
+
+          <div className="absolute inset-y-0 right-3 flex items-center gap-2">
+            {error && <AlertCircleIcon className="h-4 w-4 text-error-500" />}
+
+            {showPasswordToggle && type === 'password' && (
+              <button
+                type="button"
+                onClick={() => setShowPassword((prev) => !prev)}
+                className="text-neutral/60 hover:text-primary-400 transition-colors duration-200"
+                tabIndex={-1}
+              >
+                {showPassword ? <EyeOffIcon className="h-4 w-4" /> : <EyeIcon className="h-4 w-4" />}
+              </button>
+            )}
+
+            {rightIcon && !error && (
+              <span className="text-neutral/60">{rightIcon}</span>
+            )}
+          </div>
         </div>
+
+        {(error || helperText) && (
+          <motion.p
+            initial={{ opacity: 0, y: -6 }}
+            animate={{ opacity: 1, y: 0 }}
+            className={clsx(helperTextClass, error && 'text-error-400')}
+          >
+            {error || helperText}
+          </motion.p>
+        )}
       </div>
-      
-      {/* Helper text or error message */}
-      {(error || helperText) && (
-        <motion.p
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className={`mt-2 text-sm ${
-            error ? 'text-red-500' : 'text-neutral/70'
-          }`}
-        >
-          {error || helperText}
-        </motion.p>
-      )}
-    </div>
-  );
-});
+    );
+  }
+);
 
 Input.displayName = 'Input';
 

@@ -132,35 +132,49 @@ export const ResetPasswordPage: React.FC<ResetPasswordPageProps> = ({
           className="text-center space-y-6"
         >
           {/* Error Icon */}
-          <div className="mx-auto w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center">
-            <AlertTriangleIcon className="h-8 w-8 text-red-500" />
-          </div>
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+            className="mx-auto w-20 h-20 bg-red-500/20 backdrop-blur-sm rounded-2xl flex items-center justify-center border border-red-500/30"
+          >
+            <AlertTriangleIcon className="h-10 w-10 text-red-400" />
+          </motion.div>
 
           {/* Error Message */}
-          <div className="space-y-2">
-            <p className="text-neutral text-sm">
+          <div className="space-y-3">
+            <p className="text-white text-base font-medium">
               The password reset link you clicked is either invalid or has expired.
             </p>
-            <p className="text-neutral/70 text-xs">
+            <p className="text-neutral/80 text-sm leading-relaxed">
               Password reset links are valid for 1 hour from the time they are sent.
             </p>
           </div>
 
           {/* Action Button */}
-          <Button
-            variant="primary"
-            fullWidth
-            onClick={handleBackToLogin}
-          >
-            Back to Sign In
-          </Button>
+          <motion.div whileHover={{ scale: 1.02 }}>
+            <Button
+              variant="primary"
+              fullWidth
+              size="lg"
+              onClick={handleBackToLogin}
+              className="bg-gradient-to-r from-primary to-primary-hover hover:shadow-lg hover:shadow-primary/25"
+            >
+              Back to Sign In
+            </Button>
+          </motion.div>
 
           {/* Help Text */}
-          <div className="mt-6 p-4 bg-red-500/5 border border-red-500/20 rounded-lg">
-            <p className="text-xs text-neutral/70 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6 }}
+            className="mt-6 p-4 bg-surface/30 backdrop-blur-sm border border-glass-border rounded-xl"
+          >
+            <p className="text-xs text-neutral/80 text-center leading-relaxed">
               If you need to reset your password, please request a new reset link from the sign-in page.
             </p>
-          </div>
+          </motion.div>
         </motion.div>
       </AuthLayout>
     );

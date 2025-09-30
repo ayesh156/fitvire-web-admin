@@ -4,60 +4,63 @@
  */
 
 import React from 'react';
+import clsx from 'clsx';
 import { motion } from 'framer-motion';
 
-interface GlassCardProps {
+import {
+  cardBaseClass,
+  cardHoverEffects,
+  cardPaddingClass,
+  cardVariants,
+  type CardPadding,
+  type CardVariant
+} from './componentThemes';
+import { surfaceToneAccents, type ToneVariant } from '../../design-system';
+
+export interface GlassCardProps {
   children: React.ReactNode;
   className?: string;
-  hover?: boolean;
-  padding?: 'none' | 'sm' | 'md' | 'lg' | 'xl';
-  blur?: 'sm' | 'md' | 'lg';
+  variant?: CardVariant;
+  padding?: CardPadding;
+  hoverEffect?: keyof typeof cardHoverEffects;
+  interactive?: boolean;
+  tone?: ToneVariant;
   onClick?: () => void;
 }
 
-// Padding styles
-const paddingStyles = {
-  none: '',
-  sm: 'p-4',
-  md: 'p-6',
-  lg: 'p-8',
-  xl: 'p-10'
-};
-
-// Blur styles
-const blurStyles = {
-  sm: 'backdrop-blur-sm',
-  md: 'backdrop-blur-glass',
-  lg: 'backdrop-blur-lg'
-};
-
-export const GlassCard: React.FC<GlassCardProps> = ({ 
-  children, 
-  className = '', 
-  hover = true,
+export const GlassCard: React.FC<GlassCardProps> = ({
+  children,
+  className,
+  variant = 'glass',
   padding = 'md',
-  blur = 'md',
+  hoverEffect = 'float',
+  interactive = false,
+  tone = 'default',
   onClick
 }) => {
-  const baseClasses = [
-    'bg-glass-bg border border-glass-border rounded-2xl transition-all duration-300',
-    blurStyles[blur],
-    paddingStyles[padding],
-    onClick && 'cursor-pointer',
+  const classes = clsx(
+    cardBaseClass,
+    cardVariants[variant],
+    cardPaddingClass[padding],
+    hoverEffect !== 'none' && cardHoverEffects[hoverEffect],
+    interactive && 'cursor-pointer',
+    interactive && surfaceToneAccents[tone],
     className
-  ].filter(Boolean).join(' ');
-
-  const Component = onClick ? motion.div : motion.div;
+  );
 
   return (
-    <Component
-      whileHover={hover && !onClick ? { y: -5, scale: 1.02 } : onClick ? { scale: 1.01 } : {}}
-      whileTap={onClick ? { scale: 0.99 } : {}}
-      className={baseClasses}
+    <motion.div
+      whileHover={hoverEffect !== 'none' ? { y: -4, scale: 1.01 } : undefined}
+      whileTap={interactive ? { scale: 0.98 } : undefined}
+      className={classes}
       onClick={onClick}
+      initial={{ opacity: 0, y: 18 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.45, ease: 'easeOut' }}
     >
-      {children}
-    </Component>
+      <div className="relative z-10 flex flex-col gap-4">{children}</div>
+      <div className="absolute inset-0 -z-0 rounded-[inherit] bg-gradient-to-br from-white/5 to-transparent" />
+    </motion.div>
   );
 };
 
